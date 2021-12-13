@@ -1,0 +1,24 @@
+{
+    "Logging": {
+        "LogLevel": [
+            {
+                "Type": "Default",
+                "Pattern": "Default",
+                "Level": "LOG",
+                "Enabled": true
+            },
+            {
+                "Type": "Pattern",
+                "Pattern": "Easy.DI*",
+                "Level": "LOG",
+                "Enabled": true
+            },
+            {
+                "Type": "Class",
+                "Pattern": "Easy.EasyToolkitLoggerExamples, EasyToolkit",
+                "Level": "EXCEPTION",
+                "Enabled": false
+            }
+        ]
+    }
+}

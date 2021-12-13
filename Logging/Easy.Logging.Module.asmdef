@@ -1,0 +1,16 @@
+{
+    "name": "Easy.Logging",
+    "rootNamespace": "Easy.Logging",
+    "references": [
+        "GUID:1453deaeb66c6f54283e20f646f8a24e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

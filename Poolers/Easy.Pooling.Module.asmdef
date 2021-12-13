@@ -1,0 +1,16 @@
+{
+    "name": "Easy.Pooling",
+    "rootNamespace": "Easy.Pooling",
+    "references": [
+        "GUID:15b776aaff72b8e4fa3eee2684c72306"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

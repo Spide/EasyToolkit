@@ -1,0 +1,16 @@
+{
+    "name": "Easy.DI",
+    "rootNamespace": "Easy.DI",
+    "references": [
+        "Easy.Logging"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
