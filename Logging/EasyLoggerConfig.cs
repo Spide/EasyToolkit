@@ -7,6 +7,7 @@ namespace Easy.Logging
 {
     public class EasyLoggerConfig
     {
+        public const string DEFAULT = "Default";
         public interface ILoggerSetting
         {
             string Pattern { get; }
@@ -57,7 +58,7 @@ namespace Easy.Logging
             }
         }
 
-        private readonly Dictionary<string, ILoggerSetting> settingItems = new Dictionary<string, ILoggerSetting>(){{"Default", new PatternLevelLoggerSetting("Default", LogType.Log, true) }};
+        private readonly Dictionary<string, ILoggerSetting> settingItems = new Dictionary<string, ILoggerSetting>(){{DEFAULT, new PatternLevelLoggerSetting(DEFAULT, LogType.Log, true) }};
 
         public event Action OnSettingsChanged;
 
@@ -72,9 +73,9 @@ namespace Easy.Logging
             {
                 switch (logLevel.Type)
                 {
-                    case "Default":
+                    case DEFAULT:
                         {
-                            Setup("Default", stringToType(logLevel.Level), logLevel.Enabled);
+                            Setup(DEFAULT, stringToType(logLevel.Level), logLevel.Enabled);
                             break;
                         }
                     case "Class":
@@ -133,12 +134,12 @@ namespace Easy.Logging
                     bestMatch = item;
             }
 
-            if (bestMatch == null && settingItems.TryGetValue("Default", out settings))
+            if (bestMatch == null && settingItems.TryGetValue(DEFAULT, out settings))
             {
                 return settings;
             }
 
-            return null;
+            return bestMatch;
         }
         public LogType GetLogLevel(Type type)
         {

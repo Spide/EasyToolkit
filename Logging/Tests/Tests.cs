@@ -22,8 +22,6 @@ namespace Easy.Logging.Module.Tests
             // and allow only ERROR for class EasyLoggerConfig
             config.Setup(typeof(EasyLoggerConfig), LogType.Error);
 
-            Debug.Log(typeof(EasyLogger).FullName);
-
             var settings = config.GetLogLevel(typeof(Tests));
             Assert.True(settings == LogType.Log, "all Log levels are enabled for class Tests");
 
@@ -31,20 +29,12 @@ namespace Easy.Logging.Module.Tests
             Assert.True(settings == LogType.Error, "Log level of type ERROR is enabled for class EasyLoggerConfig ");
 
             settings = config.GetLogLevel(typeof(PatternTestClass));
-            Assert.True(settings == LogType.Exception, "pattern match form PatternTestClass shuld be exception");
+            Assert.True(settings == LogType.Exception, "pattern match form "+typeof(PatternTestClass).FullName+" should be exception");
 
             settings = config.GetLogLevel(typeof(EasyLogger));
-            Assert.True(settings == LogType.Exception, "Logger for class is disalbed by pattern");
+            Assert.True(settings == LogType.Exception, "Logger for class is disabled by pattern");
         }
 
-        public void saveConfig(){
-            var config= Resources.Load<TextAsset>("easylogger.config");
-            AssetDatabase.GetAssetPath(config);
-
-            //config.text = JsonUtility.FromJson<LoggerConfigData>();
-
-            AssetDatabase.SaveAssets();
-        }
     }
 
 
