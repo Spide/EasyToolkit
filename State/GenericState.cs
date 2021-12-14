@@ -4,21 +4,10 @@ using System.Text;
 
 namespace Easy.State
 {
-    public class GenericState<K> : IState<K>
+    public class GenericState : GenericState<string>{}
+    public class GenericState<K> : Dictionary<K,object>, IState<K>
     {
-        protected Dictionary<K, object> data;
-
         public event Action<K, object> OnChange;
-
-
-        public GenericState()
-        {
-            data = new Dictionary<K, object>();
-        }
-        public GenericState(Dictionary<K, object> from)
-        {
-            data = from;
-        }
 
         public int Get(K resource)
         {
@@ -29,24 +18,24 @@ namespace Easy.State
         {
             try
             {
-                if (data.TryGetValue(resource, out object value))
+                if (TryGetValue(resource, out object value))
                     return (R)value;
                 else
                     return default;
             }
             catch (InvalidCastException)
             {
-                UnityEngine.Debug.LogFormat("Resource {0} cannot be casted to {1} current value is {2} ", resource, typeof(R), data[resource]);
+                UnityEngine.Debug.LogFormat("Resource {0} cannot be casted to {1} current value is {2} ", resource, typeof(R), this[resource]);
                 throw;
             }
         }
 
         public bool Has(K resource)
         {
-            return data.ContainsKey(resource);
+            return ContainsKey(resource);
         }
 
-        public int Add(K resource, int value)
+        public int Plus(K resource, int value)
         {
             int cvalue = Get(resource);
             Set(resource, cvalue + value);
@@ -56,22 +45,16 @@ namespace Easy.State
 
         public void Set(K resource, object value)
         {
-            data[resource] = value;
+            this[resource] = value;
 
-            if (OnChange != null)
-                OnChange.Invoke(resource, value);
-        }
-
-        public ICollection<K> Keys
-        {
-            get => data.Keys;
+            OnChange?.Invoke(resource, value);
         }
 
 
         public override string ToString()
         {
             var result = new StringBuilder();
-            foreach (var item in data)
+            foreach (var item in this)
             {
 
                 result.Append("[");

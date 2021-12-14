@@ -1,46 +1,51 @@
 using System;
+using System.Collections.Generic;
+using Sirenix.Utilities;
 
 namespace Easy.State
 {
-    public class StateBuilder<K, S>
+    public class StateBuilder : StateBuilder<string>{}
+    public class StateBuilder<K>
     {
-        private readonly IState<K> state;
+        private readonly Dictionary<K, object> state;
 
-        public StateBuilder (IState<K> state){
-            this.state = state;
+        public StateBuilder (Dictionary<K, object> state = null){
+            this.state = state ?? new Dictionary<K, object>();
         }
 
-        public static StateBuilder<string, GenericState<string>> Create()
+        public static StateBuilder<K> Create()
         {
-            return new StateBuilder<string, GenericState<string>>(new GenericState<string>());
+            return new StateBuilder<K>();
         }
 
-        public static StateBuilder<K,S> Create<T>()  where T : IState<K>, new()
-        {
-            return new StateBuilder<K,S>(new T());
-        }
-
-        public StateBuilder<K, S> Plus(K resource, int value)
+        public StateBuilder<K> Plus(K resource, int value)
         {
             state.Add(resource, value);
             return this;
         }
 
-        public StateBuilder<K, S> Minus(K resource, int value)
+        public StateBuilder<K> Minus(K resource, int value)
         {
             state.Add(resource, -value);
             return this;
         }
 
-        public StateBuilder<K, S> Set(K resource, object value)
+        public StateBuilder<K> Set(K resource, object value)
         {
-            state.Set(resource, value);
+            state[resource] = value;
             return this;
         }
 
-        public S Build()
+        public T Build<T>() where T : IState<K>, new()
         {
-            return (S) state;
+            var builder = new T();
+            state.ForEach(pair => builder.Add(pair.Key, pair.Value));
+            return  builder;
+        }
+
+        public GenericState<K> Build()
+        {
+            return Build<GenericState<K>>();
         }
     }
 }
