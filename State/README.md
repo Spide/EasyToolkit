@@ -3,6 +3,7 @@ If you need dynamic or extensible structure for your states like statistics
 
 Example:
 ```
+// In this example we use WeaponAttribute enum, but you can chose any type like string, int, enum ... 
 var weaponStatistics = new GenericState<WeaponAttribute>();
 weaponStatistics.Set(WeaponAttribute.ACURRACY, 100);
 weaponStatistics.Set(WeaponAttribute.DAMAGE, 100);
