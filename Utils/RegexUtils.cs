@@ -1,11 +1,13 @@
 using System.Text.RegularExpressions;
-
-public static class RegexUtils
+namespace Easy.Utils
 {
-    public static Regex WildcardMatcher(string pattern)
+    public static class RegexUtils
     {
-        return new Regex("^" + Regex.Escape(pattern).
-        Replace("\\*", ".*").
-        Replace("\\?", ".") + "$");
+        public static Regex WildcardMatcher(string pattern)
+        {
+            return new Regex("^" + Regex.Escape(pattern).
+            Replace("\\*", ".*").
+            Replace("\\?", ".") + "$");
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace Easy.Logging
             public PatternLevelLoggerSetting(string pattern, LogType logLevel, bool enabled)
             {
                 Pattern = pattern;
-                Matcher = RegexUtils.WildcardMatcher(Pattern);
+                Matcher = Easy.Utils.RegexUtils.WildcardMatcher(Pattern);
                 LogLevel = logLevel;
                 Enabled = enabled;
             }

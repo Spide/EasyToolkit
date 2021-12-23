@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEngine;
-using static RegexUtils;
+using static Easy.Utils.RegexUtils;
 
 namespace Easy.Utils.Module.Tests
 {

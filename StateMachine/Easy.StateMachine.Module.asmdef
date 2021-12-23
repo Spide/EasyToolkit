@@ -1,7 +1,9 @@
 {
     "name": "Easy.StateMachine",
     "rootNamespace": "Easy.StateMachine",
-    "references": [],
+    "references": [
+        "Easy.Logging"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
