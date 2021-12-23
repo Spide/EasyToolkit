@@ -1,12 +1,10 @@
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-namespace Easy.Logging
+namespace Easy.Logging.Editor
 {
     [CustomEditor(typeof(LoggerConfig))]
-    public class LoggerConfigEditor : Editor
+    public class LoggerConfigEditor : UnityEditor.Editor
     {
         private bool toggle;
 
