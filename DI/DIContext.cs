@@ -29,7 +29,15 @@ namespace Easy.DI
             });
 
             var container = new DIContainer(name, parentContainers);
-            containers.Add(container.Name, container);
+            try
+            {
+                 containers.Add(container.Name, container);
+            }
+            catch (System.ArgumentException e)
+            {
+                LOGGER.LogError("Container with name \"{0}\" already exist. You may loaded same level twice \n \"{1}\" ", container.Name, e);
+            }
+            
 
             LOGGER.Log("Container \"{0}\" created", container.Name);
             return container;
@@ -43,7 +51,7 @@ namespace Easy.DI
             container.Bind(instance, name);
         }
 
-        public static T Resolve<T>(string containerName = null, string byName = null)
+        public static T Resolve<T>(string containerName, string byName = null)
         {
             if (containerName != null)
             {
@@ -55,7 +63,8 @@ namespace Easy.DI
                     }
                     catch (System.Exception e)
                     {
-                        LOGGER.LogWarning("cannot resolve", e);
+                        // global resolve should not log warnings
+                        LOGGER.Log("cannot resolve \"{0}\"", e.Message);
                         continue;
                     }
                 }

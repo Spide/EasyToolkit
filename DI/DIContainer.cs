@@ -63,11 +63,12 @@ namespace Easy.DI
                     }
                     catch (System.Exception e)
                     {
-                        LOGGER.LogWarning("cannot resolve", e);
+                        // parent resolve should not log errors
+                        LOGGER.Log("parent resolve \"{0}\" ", e);
                     }
                 }
 
-                throw new Exception(string.Format("Cannot resolve by name: {0}", byName));
+                throw new Exception(string.Format("Cannot resolve by name: \"{0}\" ", byName));
             }
             else
             {
@@ -78,7 +79,8 @@ namespace Easy.DI
                 }
                 catch (System.Exception e)
                 {
-                    LOGGER.LogWarning("cannot resolve", e);
+                    // parent resolve should not log errors
+                    LOGGER.LogFormat("cannot resolve  \"{0}\"", e);
                 }
 
                 throw new Exception(string.Format("Cannot resolve by type: {0} or by name: {1}", type, byName));
@@ -101,11 +103,12 @@ namespace Easy.DI
                 }
                 catch (System.Exception e)
                 {
-                    LOGGER.LogWarning("cannot resolve", e);
+                    // parent resolve should not log errors
+                    LOGGER.Log("cannot resolve from parent \"{0}\" - \"{1}\"", container.Name, type);
                 }
             }
 
-            throw new Exception(string.Format("Cannot resolve by type: {0}", type));
+            throw new Exception(string.Format("Cannot resolve by type: \"{0}\"", type));
         }
 
         public void Clear()
