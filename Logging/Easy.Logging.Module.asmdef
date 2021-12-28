@@ -1,9 +1,7 @@
 {
     "name": "Easy.Logging",
     "rootNamespace": "Easy.Logging",
-    "references": [
-        "Easy.Utils"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

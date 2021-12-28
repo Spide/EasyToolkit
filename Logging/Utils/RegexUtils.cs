@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-namespace Easy.Utils
+namespace Easy.Logging
 {
     public static class RegexUtils
     {

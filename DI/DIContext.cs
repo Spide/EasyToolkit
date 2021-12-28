@@ -35,7 +35,7 @@ namespace Easy.DI
             }
             catch (System.ArgumentException e)
             {
-                LOGGER.LogError("Container with name \"{0}\" already exist. You may loaded same level twice \n \"{1}\" ", container.Name, e);
+                LOGGER.LogError("Container with name \"{0}\" already exist. You may loaded same scene twice \n \"{1}\" ", container.Name, e);
             }
             
 

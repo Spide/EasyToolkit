@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
-using UnityEngine;
-using static Easy.Utils.RegexUtils;
+using static Easy.Logging.RegexUtils;
 
 namespace Easy.Utils.Module.Tests
 {
