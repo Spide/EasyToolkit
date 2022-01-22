@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 namespace Easy.Pooling
 {
-    public abstract class Pool<T> : IPool<T>
+    public class Pool<T> : IPool<T>
     {
         protected Stack<T> pool;
 
@@ -13,18 +13,18 @@ namespace Easy.Pooling
 
         protected int limit;
 
-        protected Pool(Func<T> factoryMethod, int limit)
+        public Pool(Func<T> factoryMethod, int limit)
         {
             pool = new Stack<T>(limit);
             this.factoryMethod = factoryMethod;
             this.limit = limit;
         }
 
-        protected Pool(IFactory<T> factory, int limit) : this(factory.Create, limit)
+        public Pool(IFactory<T> factory, int limit) : this(factory.Create, limit)
         {
         }
 
-        protected Pool(Func<T> factoryMethod, Func<T, T> hidrateMethod, Func<T, T> snoozeMethod, Action<T> destroyMethod, int limit) : this(factoryMethod, limit)
+        public Pool(Func<T> factoryMethod, Func<T, T> hidrateMethod, Func<T, T> snoozeMethod, Action<T> destroyMethod, int limit) : this(factoryMethod, limit)
         {
             this.hidrateMethod = hidrateMethod;
             this.snoozeMethod = snoozeMethod;
