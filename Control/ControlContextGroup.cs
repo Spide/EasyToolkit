@@ -48,6 +48,7 @@ namespace Easy.Control
 
         }
 
+        // <returns>description</returns>
         public bool On(string eventName, params object[] parameters)
         {
             var stopPropagation = controlContextHandler.TriggerEvent(eventName, parameters);

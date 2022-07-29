@@ -8,7 +8,6 @@ namespace Easy.Control
         private readonly Action<object[]> action;
 
         public int Priority { get; } = 0;
-
         public bool IsActive { get; protected set; }
 
         public event Action<IControlContext, bool> OnActiveStatusChanged;
@@ -36,7 +35,7 @@ namespace Easy.Control
         {
             if (this.eventName.Equals(eventName))
             {
-                this.action.Invoke(parameters);
+                action.Invoke(parameters);
                 return true;
             }
 

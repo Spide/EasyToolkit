@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Easy.State
 {
-    public class GenericState : GenericState<string>{}
+    public class GenericState : GenericState<string>, IState<string>{}
     public class GenericState<K> : Dictionary<K,object>, IState<K>
     {
         public event Action<K, object> OnChange;
