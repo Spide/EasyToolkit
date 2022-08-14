@@ -1,18 +1,19 @@
 using System;
+using UnityEngine.InputSystem;
 
 namespace Easy.Control
 {
     public class SingleEventControlContext : IControlContext
     {
         private readonly string eventName;
-        private readonly Action<object[]> action;
+        private readonly Action<InputAction.CallbackContext> action;
 
         public int Priority { get; } = 0;
         public bool IsActive { get; protected set; }
 
         public event Action<IControlContext, bool> OnActiveStatusChanged;
 
-        public SingleEventControlContext(int priority, string eventName, Action<object[]> action)
+        public SingleEventControlContext(int priority, string eventName, Action<InputAction.CallbackContext> action)
         {
             this.eventName = eventName;
             this.action = action;
@@ -35,7 +36,7 @@ namespace Easy.Control
         {
             if (this.eventName.Equals(eventName))
             {
-                action.Invoke(parameters);
+                action.Invoke((InputAction.CallbackContext)parameters[0]);
                 return true;
             }
 
