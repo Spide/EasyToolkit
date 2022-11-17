@@ -1,7 +1,7 @@
-using Easy.Logging;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Easy.Logging;
 using UnityEngine;
 
 namespace Easy.Control
@@ -18,7 +18,7 @@ namespace Easy.Control
         protected bool isActive = false;
         public bool IsActive { get => isActive; }
 
-        protected Dictionary<string, Action<object[]>> events = new Dictionary<string, Action<object[]>>();
+        protected Dictionary<string,MethodInfo> events = new Dictionary<string, MethodInfo>();
 
         public virtual void Activate()
         {
@@ -40,6 +40,21 @@ namespace Easy.Control
             Autobind();
         }
 
+        protected void SafeMethodInvoke(MethodInfo method, object[] parameters)
+        {
+            int paramLength = method.GetParameters().Length;
+            if (parameters.Length > paramLength)
+            {
+                var realParams = new object[paramLength];
+                Array.Copy(parameters, realParams, paramLength);
+                method.Invoke(this, realParams);
+            }
+            else
+            {
+                method.Invoke(this, parameters);
+            }
+        }
+
         protected void Autobind()
         {
             LOGGER.Log("AutoDetection events for [{0}] ", this.ToString());
@@ -50,34 +65,21 @@ namespace Easy.Control
                 {
                     LOGGER.Log("Method check {0} attributes length {1} ", method.Name, attributes.Length);
 
-                    void methodToInvoke(object[] parameters)
-                    {
-                        int paramLength = method.GetParameters().Length;
-                        if (parameters.Length > paramLength)
-                        {
-                            var realParams = new object[paramLength];
-                            Array.Copy(parameters, realParams, paramLength);
-                            method.Invoke(this, realParams);
-                        }
-                        else
-                        {
-                            method.Invoke(this, parameters);
-                        }
-                    }
-
                     foreach (ControlEvent attribute in attributes)
                     {
-                        foreach (string name in attribute.Names)
-                        {
-                            LOGGER.Log("Added {0} -> {1}", name, method.Name);
-                            SetEvent(name, methodToInvoke);
-                        }
+                        LOGGER.Log("Added {0} -> {1}", attribute.Name, method.Name);
+                        SetEvent(attribute.Name, method);
                     }
                 }
             }
         }
 
         protected void SetEvent(string eventName, Action<object[]> action)
+        {
+            events[eventName] = action.Method;
+        }
+
+        protected void SetEvent(string eventName, MethodInfo action)
         {
             events[eventName] = action;
         }
@@ -86,9 +88,9 @@ namespace Easy.Control
         {
             LOGGER.Log("Control event \"{0}\" triggered", eventName);
 
-            if (events.TryGetValue(eventName, out Action<object[]> thisEvent))
+            if (events.TryGetValue(eventName, out MethodInfo thisEvent))
             {
-                thisEvent.Invoke(parameters);
+                SafeMethodInvoke(thisEvent, parameters);
                 return true;
             }
             else

@@ -5,14 +5,11 @@ namespace Easy.Control
     [AttributeUsage(AttributeTargets.Method, Inherited = true)]
     public class ControlEvent : Attribute
     {
-        public string[] Names { get; }
+        public string Name { get; }
 
-        // Constructor 
-
-        public ControlEvent(params string[] names)
+        public ControlEvent(string names)
         {
-            Names = names;
+            Name = names;
         }
-
     }
 }

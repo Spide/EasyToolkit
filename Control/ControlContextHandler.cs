@@ -12,12 +12,12 @@ namespace Easy.Control
         private readonly List<IControlContext> contexts = new List<IControlContext>();
         private IControlContext[] activeContexts = null;
 
+        Predicate<IControlContext> filterActive = c => c.IsActive;
+
         private IControlContext[] GetActiveContexts()
         {
-            if (activeContexts == null)
-            {
-                activeContexts = contexts.FindAll(c => c.IsActive).ToArray();
-            }
+            if (activeContexts == null) 
+                activeContexts = contexts.FindAll(filterActive).ToArray();
 
             return activeContexts;
         }
@@ -42,7 +42,7 @@ namespace Easy.Control
             activeContexts = null;
         }
 
-        public bool TriggerEvent(string eventName, params object[] parameters)
+        public bool  TriggerEvent(string eventName, params object[] parameters)
         {
             LOGGER.Log("Control event \"{0}\" triggered", eventName);
 

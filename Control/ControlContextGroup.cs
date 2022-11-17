@@ -36,24 +36,19 @@ namespace Easy.Control
         public void Activate()
         {
             isActive = true;
-            if (OnActiveStatusChanged != null)
-                OnActiveStatusChanged(this, IsActive);
+            OnActiveStatusChanged?.Invoke(this, IsActive);
         }
 
         public void Deactivate()
         {
             isActive = false;
-            if (OnActiveStatusChanged != null)
-                OnActiveStatusChanged(this, IsActive);
-
+            OnActiveStatusChanged?.Invoke(this, IsActive);
         }
 
         // <returns>description</returns>
         public bool On(string eventName, params object[] parameters)
         {
-            var stopPropagation = controlContextHandler.TriggerEvent(eventName, parameters);
-
-            return stopPropagation;
+            return controlContextHandler.TriggerEvent(eventName, parameters);
         }
     }
 }
