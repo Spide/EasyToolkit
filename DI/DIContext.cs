@@ -11,19 +11,14 @@ namespace Easy.DI
 
         private static readonly Dictionary<string, DIContainer> containers = new Dictionary<string, DIContainer>();
 
+        public static event Action<String> OnContextBinded;
+
         public static DIContainer CreateContainer(string name, params string[] parents)
         {
-            GameObject mainContext = GameObject.Find(MainContext.CONTEXT_NAME);
-            if (mainContext == null)
-            {
-                mainContext = new GameObject(MainContext.CONTEXT_NAME);
-                mainContext.AddComponent<MainContext>();
-            }
-
             var parentContainers = Array.ConvertAll(parents, containerName =>
             {
                 if (!containers.TryGetValue(containerName, out DIContainer container))
-                    throw new Exception(string.Format("container with name: \"{0}\" ", containerName));
+                    throw new Exception(string.Format("container with name: \"{0}\" does not exist ", containerName));
 
                 return container;
             });
@@ -31,13 +26,12 @@ namespace Easy.DI
             var container = new DIContainer(name, parentContainers);
             try
             {
-                 containers.Add(container.Name, container);
+                containers.Add(container.Name, container);
             }
             catch (System.ArgumentException e)
             {
                 LOGGER.LogError("Container with name \"{0}\" already exist. You may loaded same scene twice \n \"{1}\" ", container.Name, e);
             }
-            
 
             LOGGER.Log("Container \"{0}\" created", container.Name);
             return container;
@@ -53,7 +47,7 @@ namespace Easy.DI
 
         public static T Resolve<T>(string containerName, string byName = null)
         {
-            if (containerName != null)
+            if (containerName == null)
             {
                 foreach (var container in containers.Values)
                 {
@@ -69,12 +63,12 @@ namespace Easy.DI
                     }
                 }
 
-                throw new Exception(string.Format("Cannot resolve by type: {0} or by name: {1}", typeof(T), byName));
+                throw new Exception(string.Format("Cannot resolve by type: \"{0}\" or by name: \"{1}\"", typeof(T), byName));
             }
             else
             {
                 if (!containers.ContainsKey(containerName))
-                    throw new System.Exception("Container does not exists");
+                    throw new System.Exception("Container \""+containerName+"\" does not exists");
 
                 return containers[containerName].Resolve<T>(byName);
             }
@@ -88,6 +82,11 @@ namespace Easy.DI
             containers[container].Clear();
 
             containers.Remove(container);
+        }
+
+        public static void ContextBinded(String sceneContext)
+        {
+            OnContextBinded?.Invoke(sceneContext);
         }
     }
 }

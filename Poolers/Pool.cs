@@ -78,8 +78,7 @@ namespace Easy.Pooling
                 pool.Push(snoozeMethod != null ? snoozeMethod.Invoke(item) : item);
             } else
             {
-                if(destroyMethod != null)
-                    destroyMethod(item);
+                destroyMethod?.Invoke(item);
             }
         }
     }

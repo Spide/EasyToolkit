@@ -25,7 +25,6 @@ namespace Easy.StateMachine
                 transition.OnTransitionDone?.Invoke();
             }
 
-
             CurrentState?.Update();
         }
 

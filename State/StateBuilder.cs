@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Sirenix.Utilities;
-
 namespace Easy.State
 {
     public class StateBuilder : StateBuilder<string>{}
@@ -39,7 +36,9 @@ namespace Easy.State
         public T Build<T>() where T : IState<K>, new()
         {
             var builder = new T();
-            state.ForEach(pair => builder.Add(pair.Key, pair.Value));
+            foreach (var pair in state)
+                builder.Add(pair.Key, pair.Value);
+
             return  builder;
         }
 
