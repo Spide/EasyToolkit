@@ -45,7 +45,6 @@ namespace Easy.Control
             OnActiveStatusChanged?.Invoke(this, IsActive);
         }
 
-        // <returns>description</returns>
         public bool On(string eventName, params object[] parameters)
         {
             return controlContextHandler.TriggerEvent(eventName, parameters);

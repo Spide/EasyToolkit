@@ -11,8 +11,7 @@ namespace Easy.Control
 
         private readonly List<IControlContext> contexts = new List<IControlContext>();
         private IControlContext[] activeContexts = null;
-
-        Predicate<IControlContext> filterActive = c => c.IsActive;
+        private readonly Predicate<IControlContext> filterActive = c => c.IsActive;
 
         private IControlContext[] GetActiveContexts()
         {
