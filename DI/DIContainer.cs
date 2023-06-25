@@ -44,7 +44,7 @@ namespace Easy.DI
             }
             catch (System.Exception e)
             {
-                LOGGER.LogError("Cannot resolve some for {0} {1} ", typeof(T) , e);
+                LOGGER.LogError("Cannot resolve type {0} for {1} ", typeof(T) , e);
             }
         }
 
