@@ -29,7 +29,7 @@ namespace Easy.State
                 throw;
             }
         }
-
+        
         public bool Has(K resource)
         {
             return ContainsKey(resource);
@@ -49,8 +49,6 @@ namespace Easy.State
 
             OnChange?.Invoke(resource, value);
         }
-
-
         public override string ToString()
         {
             var result = new StringBuilder();

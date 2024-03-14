@@ -1,9 +1,10 @@
 namespace Easy.BehaviourTree
 {
-    public class FailureDecorator<T> : DecoratorNode<T> where T : IBlackboard
+    public class FailureDecorator<T, V> : DecoratorNode<T, V> where T : IBlackboard<V>
     {
         public override Result Run()
         {
+            Child.Run();
             return Result.FAILED;
         }
 

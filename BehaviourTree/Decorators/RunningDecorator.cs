@@ -1,6 +1,6 @@
 namespace Easy.BehaviourTree
 {
-    public class RunningDecorator<T> : DecoratorNode<T> where T : IBlackboard
+    public class RunningDecorator<T, V> : DecoratorNode<T, V> where T : IBlackboard<V>
     {
         public RunningDecorator()
         {
@@ -8,6 +8,7 @@ namespace Easy.BehaviourTree
 
         public override Result Run()
         {
+            Child.Run();
             return Result.RUNNING;
         }
 

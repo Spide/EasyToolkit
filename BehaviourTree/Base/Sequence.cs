@@ -1,6 +1,6 @@
 namespace Easy.BehaviourTree
 {
-    public class Sequence<T> : CompositeNode<T> where T : IBlackboard
+    public class Sequence<T, V> : CompositeNode<T, V> where T : IBlackboard<V>
     {
         public override Result Run()
         {
@@ -12,7 +12,6 @@ namespace Easy.BehaviourTree
                     continue;
                 else
                     return result; // report failed or running immediatly
-
             }
 
             return Result.SUCCESS; // if all success

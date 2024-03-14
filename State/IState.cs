@@ -8,6 +8,7 @@ namespace Easy.State
     {
         event Action<T, object> OnChange;
 
+        bool Has(T resource);
         int Plus(T resource, int value);
         int Get(T resource);
         R Get<R>(T resource);

@@ -1,14 +1,22 @@
 namespace Easy.BehaviourTree
 {
-    public abstract class DecoratorNode<T> : Node<T> where T : IBlackboard
+    public abstract class DecoratorNode<T, V> : Node<T, V> where T : IBlackboard<V>
     {
-        public INode<T> Child { get; set; }
+        public DecoratorNode() : base()
+        {
+        }
 
-        public virtual DecoratorNode<T> Initialize(T blackboard, INode<T> child)
+        protected DecoratorNode(INode<T, V> child) : base()
+        {
+            Child = child;
+        }
+
+        public INode<T,V> Child { get; set; }
+
+        public override void Initialize(T blackboard)
         {
             base.Initialize(blackboard);
-            Child = child;
-            return this;
+            Child.Initialize(blackboard);
         }
 
 

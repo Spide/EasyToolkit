@@ -4,14 +4,33 @@ using System.Collections.Generic;
 
 namespace Easy.BehaviourTree
 {
-    public abstract class CompositeNode<T> : Node<T> where T : IBlackboard
+    public abstract class CompositeNode<T, V> : Node<T, V> where T : IBlackboard<V>
     {
-        public List<INode<T>> Childs { get; protected set; }
+        public CompositeNode() : base()
+        {
+            Childs = new List<INode<T, V>>();
+        }
 
-        public void addChild(INode<T> child)
+        public CompositeNode(List<INode<T, V>> childs) : base()
+        {
+            Childs = childs;
+        }
+
+        public List<INode<T, V>> Childs { get; set; }
+
+        public override void Initialize(T blackboard)
+        {
+            base.Initialize(blackboard);
+
+            foreach (var item in Childs)
+                item.Initialize(blackboard);
+            
+        }
+
+        public void addChild(INode<T, V> child)
         {
             if (Childs == null)
-                Childs = new List<INode<T>>();
+                Childs = new List<INode<T, V>>();
 
             Childs.Add(child);
         }

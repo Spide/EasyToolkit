@@ -1,6 +1,6 @@
 namespace Easy.BehaviourTree
 {
-    public class Selector<T> : CompositeNode<T> where T : IBlackboard
+    public class Selector<T, V> : CompositeNode<T, V> where T : IBlackboard<V>
     {
         public override Result Run()
         {
