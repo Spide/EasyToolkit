@@ -8,7 +8,7 @@ namespace Easy.DI
 {
     public class DIContainer
     {
-        protected static EasyLogger LOGGER = LoggerFactory.GetLogger(typeof(DIContainer), Color.Lerp(Color.gray, Color.blue, 0.5f), "[DIContainer]");
+        protected static EasyLogger LOGGER = LoggerFactory.GetLogger(typeof(DIContainer), Color.Lerp(Color.gray, Color.blue, 0.5f));
 
         private readonly Dictionary<string, object> container = new Dictionary<string, object>();
 
