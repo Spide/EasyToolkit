@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Easy.Logging;
 using UnityEngine;
 
@@ -11,82 +12,95 @@ namespace Easy.DI
 
         private static readonly Dictionary<string, DIContainer> containers = new Dictionary<string, DIContainer>();
 
-        public static event Action<String> OnContextBinded;
+        public static event Action<string> OnContextBinded;
 
         public static DIContainer CreateContainer(string name, params string[] parents)
         {
-            var parentContainers = Array.ConvertAll(parents, containerName =>
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Container name cannot be null or empty", nameof(name));
+
+            var parentContainers = Array.ConvertAll(parents ?? Array.Empty<string>(), containerName =>
             {
                 if (!containers.TryGetValue(containerName, out DIContainer container))
-                    throw new Exception(string.Format("container with name: \"{0}\" does not exist ", containerName));
+                    throw new Exception($"container with name: '{containerName}' does not exist");
 
                 return container;
             });
 
             var container = new DIContainer(name, parentContainers);
-            try
-            {
-                containers.Add(container.Name, container);
-            }
-            catch (System.ArgumentException e)
-            {
-                LOGGER.LogError("Container with name \"{0}\" already exist. You may loaded same scene twice \n \"{1}\" ", container.Name, e);
-            }
+            if (containers.ContainsKey(container.Name))
+                throw new InvalidOperationException($"Container with name '{container.Name}' already exists.");
 
-            LOGGER.Log("Container \"{0}\" created", container.Name);
+            containers.Add(container.Name, container);
+            LOGGER.Log("Container '{0}' created", container.Name);
             return container;
         }
 
         public static void Bind(string containerName, object instance, string name = null)
         {
             if (!containers.TryGetValue(containerName, out DIContainer container))
-                throw new System.Exception("Container does not exists");
+                throw new Exception($"Container '{containerName}' does not exist");
 
             container.Bind(instance, name);
         }
 
-        public static T Resolve<T>(string containerName, string byName = null)
+        public static bool TryResolve<T>(string containerName, out T result, string byName = null)
         {
             if (containerName == null)
             {
-                foreach (var container in containers.Values)
+                foreach (var container in OrderedContainers())
                 {
-                    try
-                    {
-                        return container.Resolve<T>(byName);
-                    }
-                    catch (System.Exception e)
-                    {
-                        // global resolve should not log warnings
-                        LOGGER.Log("cannot resolve \"{0}\"", e.Message);
-                        continue;
-                    }
+                    if (container.TryResolve(out result, byName))
+                        return true;
                 }
 
-                throw new Exception(string.Format("Cannot resolve by type: \"{0}\" or by name: \"{1}\"", typeof(T), byName));
+                result = default;
+                return false;
             }
-            else
-            {
-                if (!containers.ContainsKey(containerName))
-                    throw new System.Exception("Container \""+containerName+"\" does not exists");
 
-                return containers[containerName].Resolve<T>(byName);
+            if (!containers.TryGetValue(containerName, out DIContainer selected))
+            {
+                result = default;
+                return false;
             }
+
+            return selected.TryResolve(out result, byName);
+        }
+
+        public static T Resolve<T>(string containerName, string byName = null)
+        {
+            if (TryResolve(containerName, out T result, byName))
+                return result;
+
+            throw new Exception($"Cannot resolve '{typeof(T)}' from container '{containerName ?? "<global>"}' byName '{byName}'.");
         }
 
         public static void Clear(string container)
         {
             if (!containers.ContainsKey(container))
-                throw new System.Exception(string.Format("Container \"{0}\" does not exists", container));
+                throw new Exception($"Container '{container}' does not exists");
 
             containers[container].Clear();
-
             containers.Remove(container);
         }
 
-        public static void ContextBinded(String sceneContext)
+        public static void ContextBinded(string sceneContext)
         {
             OnContextBinded?.Invoke(sceneContext);
+        }
+
+        private static IEnumerable<DIContainer> OrderedContainers()
+        {
+            if (containers.TryGetValue(MainContext.NAME, out DIContainer global))
+                yield return global;
+
+            foreach (var pair in containers.OrderBy(p => p.Key))
+            {
+                if (pair.Key == MainContext.NAME)
+                    continue;
+
+                yield return pair.Value;
+            }
         }
     }
 }

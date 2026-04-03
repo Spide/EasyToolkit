@@ -2,7 +2,7 @@
     "name": "Easy.State",
     "rootNamespace": "Easy.State",
     "references": [
-        "GUID:15b776aaff72b8e4fa3eee2684c72306"
+        "Easy.Logging"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
