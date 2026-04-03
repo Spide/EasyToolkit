@@ -6,9 +6,11 @@ namespace Easy.DI
     {
         public string As;
         public string contextName;
+
         private void Awake()
         {
-            DIContext.Bind(contextName != "" ? contextName : gameObject.scene.name, gameObject, As);
+            var targetContext = string.IsNullOrWhiteSpace(contextName) ? gameObject.scene.name : contextName;
+            DIContext.Bind(targetContext, gameObject, As);
         }
     }
 }

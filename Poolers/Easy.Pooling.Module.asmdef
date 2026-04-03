@@ -2,7 +2,7 @@
     "name": "Easy.Pooling",
     "rootNamespace": "Easy.Pooling",
     "references": [
-        "GUID:fadc959fc671cc8449a85dc405bf97a7"
+        "Easy.Logging"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
