@@ -1,29 +1,36 @@
-using System;
 using UnityEngine;
 
 namespace Easy.BehaviourTree
 {
     public class TimeoutDecorator<T, V> : DecoratorNode<T, V> where T : IBlackboard<V>
     {
+        private readonly float initialTimer;
 
-        public float Timer {get; set;} = 0;
+        public float Timer { get; private set; }
 
         public TimeoutDecorator(float timer)
         {
-            Timer = timer;
+            initialTimer = timer < 0 ? 0 : timer;
+            Timer = initialTimer;
         }
 
         public override Result Run()
         {
-            if(Timer <= 0)
-                return Result.SUCCESS;
+            if (Timer <= 0f)
+                return Result.FAILED;
 
-            Timer = Timer - Time.deltaTime;
+            var result = Child.Run();
+            if (result == Result.SUCCESS || result == Result.FAILED)
+                return result;
 
-            Child.Run();
+            Timer -= Time.deltaTime;
+            return Timer > 0f ? Result.RUNNING : Result.FAILED;
+        }
 
-            return Timer > 0 ? Result.RUNNING : Result.SUCCESS;
-
+        public override void Stop()
+        {
+            Timer = initialTimer;
+            Child?.Stop();
         }
     }
 }

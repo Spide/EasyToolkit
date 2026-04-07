@@ -16,59 +16,70 @@ namespace Easy.BehaviourTree
 
         public DecoratorBuilder<T, V> Running()
         {
-            var node = new RunningDecorator<T, V>();
-            node.Child = TargetNode;
-            CurrentNode = node;
-            return this;
-        }
-        public DecoratorBuilder<T, V> Success()
-        {
-            var node = new SuccessDecorator<T, V>();
-            node.Child = TargetNode;
-            CurrentNode = node;
-            return this;
-        }
-        public DecoratorBuilder<T, V> Failing()
-        {
-            var node = new FailureDecorator<T, V>();
-            node.Child = TargetNode;
+            var node = new RunningDecorator<T, V>
+            {
+                Child = TargetNode
+            };
             CurrentNode = node;
             return this;
         }
 
+        public DecoratorBuilder<T, V> Success()
+        {
+            var node = new SuccessDecorator<T, V>
+            {
+                Child = TargetNode
+            };
+            CurrentNode = node;
+            return this;
+        }
+
+        public DecoratorBuilder<T, V> Failing()
+        {
+            var node = new FailureDecorator<T, V>
+            {
+                Child = TargetNode
+            };
+            CurrentNode = node;
+            return this;
+        }
 
         public DecoratorBuilder<T, V> Rule(Func<T, bool> rule)
         {
-            var node = new ConditionDecorator<T, V>(rule);
-            node.Rule = rule;
-            node.Child = TargetNode;
+            var node = new ConditionDecorator<T, V>(rule)
+            {
+                Child = TargetNode
+            };
             CurrentNode = node;
             return this;
         }
 
         public DecoratorBuilder<T, V> Proxy(Func<INode<T, V>, T, Result, Result> proxy)
         {
-            var node = new ProxyDecorator<T, V>(proxy);
-            node.Proxy = proxy;
-            node.Child = TargetNode;
+            var node = new ProxyDecorator<T, V>(proxy)
+            {
+                Child = TargetNode
+            };
             CurrentNode = node;
             return this;
         }
 
         public DecoratorBuilder<T, V> Repeat(int count)
         {
-            var node = new RepeatDecorator<T, V>(count);
-            node.Counter = count;
-            node.Child = TargetNode;
+            var node = new RepeatDecorator<T, V>(count)
+            {
+                Child = TargetNode
+            };
             CurrentNode = node;
             return this;
         }
 
         public DecoratorBuilder<T, V> Timeout(float timer)
         {
-            var node = new TimeoutDecorator<T, V>(timer);
-            node.Timer = timer;
-            node.Child = TargetNode;
+            var node = new TimeoutDecorator<T, V>(timer)
+            {
+                Child = TargetNode
+            };
             CurrentNode = node;
             return this;
         }
@@ -77,6 +88,5 @@ namespace Easy.BehaviourTree
         {
             return CurrentNode;
         }
-
     }
 }

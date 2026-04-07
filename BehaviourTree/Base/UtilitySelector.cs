@@ -5,44 +5,43 @@ namespace Easy.BehaviourTree
 {
     public class UtilitySelector<T, V> : CompositeNode<T, V> where T : IBlackboard<V>
     {
-
         private List<Func<T, int>> utilityScore;
-
-        public UtilitySelector()
-        {
-        }
 
         public List<Func<T, int>> UtilityScore { get => utilityScore; set => utilityScore = value; }
 
-        public UtilitySelector<T, V> AddChild(INode<T, V> node, Func<T, int> UtilityScoreGetter)
+        public UtilitySelector<T, V> AddChild(INode<T, V> node, Func<T, int> utilityScoreGetter)
         {
-            addChild(node);
+            if (utilityScoreGetter == null)
+                throw new ArgumentNullException(nameof(utilityScoreGetter));
 
-             if (utilityScore == null)
+            AddChild(node);
+
+            if (utilityScore == null)
                 utilityScore = new List<Func<T, int>>();
 
-            utilityScore.Add(UtilityScoreGetter);
+            utilityScore.Add(utilityScoreGetter);
             return this;
         }
 
-
         public override Result Run()
         {
-            int score = 0;
-            INode<T,V> current = null;
+            if (Childs == null || Childs.Count == 0)
+                return Result.FAILED;
+
+            int bestScore = int.MinValue;
+            INode<T, V> current = null;
 
             for (int i = 0; i < Childs.Count; i++)
             {
                 var calculateScore = UtilityScore[i].Invoke(blackboard);
-                if (calculateScore > score )
+                if (calculateScore > bestScore)
                 {
-                    score = calculateScore;
+                    bestScore = calculateScore;
                     current = Childs[i];
                 }
             }
 
-            return score > 0 ? current.Run() : Result.FAILED; 
+            return current != null ? current.Run() : Result.FAILED;
         }
     }
-
 }

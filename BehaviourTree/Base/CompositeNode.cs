@@ -1,5 +1,4 @@
-
-
+using System;
 using System.Collections.Generic;
 
 namespace Easy.BehaviourTree
@@ -13,7 +12,7 @@ namespace Easy.BehaviourTree
 
         public CompositeNode(List<INode<T, V>> childs) : base()
         {
-            Childs = childs;
+            Childs = childs ?? new List<INode<T, V>>();
         }
 
         public List<INode<T, V>> Childs { get; set; }
@@ -23,18 +22,28 @@ namespace Easy.BehaviourTree
             base.Initialize(blackboard);
 
             foreach (var item in Childs)
+            {
+                if (item == null)
+                    throw new InvalidOperationException($"Composite '{GetType().Name}' contains a null child.");
+
                 item.Initialize(blackboard);
-            
+            }
         }
 
         public void addChild(INode<T, V> child)
         {
+            AddChild(child);
+        }
+
+        public void AddChild(INode<T, V> child)
+        {
+            if (child == null)
+                throw new ArgumentNullException(nameof(child));
+
             if (Childs == null)
                 Childs = new List<INode<T, V>>();
 
             Childs.Add(child);
         }
-
     }
-
 }

@@ -1,11 +1,9 @@
 using System;
-using UnityEngine;
 
 namespace Easy.BehaviourTree
 {
     public class TreeBuilder<T, V> : TreeBuilder<T, V, INode<T, V>> where T : IBlackboard<V>
     {
-
     }
 
     public class TreeBuilder<T, V, N> where T : IBlackboard<V> where N : INode<T, V>
@@ -41,7 +39,7 @@ namespace Easy.BehaviourTree
         {
             return new CompositeBuilder<T, V>(new Parallel<T, V>());
         }
-        
+
         public static UtilitySelectorBuilder<T, V> Utility()
         {
             return new UtilitySelectorBuilder<T, V>(new UtilitySelector<T, V>());
@@ -49,12 +47,7 @@ namespace Easy.BehaviourTree
 
         public static N Node()
         {
-            if (baseType.IsAssignableFrom(typeof(N)))
-            {
-                return (N)Activator.CreateInstance(typeof(N));
-            }
-
-            throw new Exception("Not valid type for node");
+            return Activator.CreateInstance<N>();
         }
 
         public static INode<T, V> Node(Type nodeType)
@@ -74,14 +67,17 @@ namespace Easy.BehaviourTree
 
         public static R Node<R>(Type nodeType, params object[] args)
         {
-            if (baseType.IsAssignableFrom(nodeType))
-            {
-                return (R)Activator.CreateInstance(nodeType, args);
-            }
+            if (nodeType == null)
+                throw new ArgumentNullException(nameof(nodeType));
 
-            throw new Exception("Not valid type for node");
+            if (!typeof(INode<T, V>).IsAssignableFrom(nodeType))
+                throw new Exception($"Type '{nodeType}' does not implement INode<{typeof(T).Name}, {typeof(V).Name}>.");
+
+            object instance = Activator.CreateInstance(nodeType, args);
+            if (instance is R typed)
+                return typed;
+
+            throw new Exception($"Type '{nodeType}' cannot be cast to '{typeof(R)}'.");
         }
-
     }
-
 }
