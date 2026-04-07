@@ -1,3 +1,5 @@
+using System;
+
 namespace Easy.BehaviourTree
 {
     public abstract class DecoratorNode<T, V> : Node<T, V> where T : IBlackboard<V>
@@ -11,15 +13,16 @@ namespace Easy.BehaviourTree
             Child = child;
         }
 
-        public INode<T,V> Child { get; set; }
+        public INode<T, V> Child { get; set; }
 
         public override void Initialize(T blackboard)
         {
             base.Initialize(blackboard);
+
+            if (Child == null)
+                throw new InvalidOperationException($"Decorator '{GetType().Name}' requires a non-null child node.");
+
             Child.Initialize(blackboard);
         }
-
-
     }
-
 }

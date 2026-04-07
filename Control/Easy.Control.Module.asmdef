@@ -1,6 +1,6 @@
 {
     "name": "Easy.Control",
-    "rootNamespace": "Easy.Control.Module",
+    "rootNamespace": "Easy.Control",
     "references": [
         "Unity.InputSystem",
         "Easy.Logging"

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +23,8 @@ namespace Easy.DI
 
         private void OnDestroy()
         {
-            DIContext.Clear(container.Name);
+            if (container != null)
+                DIContext.Clear(container.Name);
         }
     }
 }

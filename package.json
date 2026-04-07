@@ -1,0 +1,21 @@
+{
+  "name": "com.easytoolkit.core",
+  "version": "0.2.0",
+  "displayName": "EasyToolkit",
+  "description": "A modular Unity toolkit with DI, state, state machine, pooling, logging, control contexts, and behaviour tree utilities.",
+  "unity": "2021.3",
+  "author": {
+    "name": "EasyToolkit Contributors"
+  },
+  "keywords": [
+    "unity",
+    "toolkit",
+    "di",
+    "pooling",
+    "state-machine",
+    "behaviour-tree"
+  ],
+  "dependencies": {
+    "com.unity.inputsystem": "1.7.0"
+  }
+}

@@ -1,37 +1,42 @@
-using UnityEngine;
-
 namespace Easy.BehaviourTree
 {
     public class RepeatDecorator<T, V> : DecoratorNode<T, V> where T : IBlackboard<V>
     {
-        public int Counter { get; set; } = 0;
+        private readonly int initialCount;
+
+        public int Counter { get; private set; }
 
         public RepeatDecorator(int counter)
         {
-            Counter = counter;
+            initialCount = counter < 0 ? 0 : counter;
+            Counter = initialCount;
         }
 
         public override Result Run()
         {
-            Debug.LogFormat("run repeat {0} - {1} ", Counter);
+            if (Counter <= 0)
+                return Result.SUCCESS;
 
-            for (int i = Counter; i > 0; i--)
+            for (int i = 0; i < Counter; i++)
             {
                 var run = Child.Run();
-                Debug.LogFormat("run with {0} - {1} {2} ", Counter, run.ToString());
                 if (run == Result.FAILED)
                     return Result.FAILED;
 
                 if (run == Result.RUNNING)
-                    continue;
+                    return Result.RUNNING;
 
                 Counter--;
-
-            } 
-
-            Debug.LogFormat("end reapeater with {0} - {1}", Counter);
+                i--;
+            }
 
             return Counter <= 0 ? Result.SUCCESS : Result.RUNNING;
+        }
+
+        public override void Stop()
+        {
+            Counter = initialCount;
+            Child?.Stop();
         }
     }
 }
