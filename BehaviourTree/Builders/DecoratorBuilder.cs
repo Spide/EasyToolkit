@@ -64,6 +64,26 @@ namespace Easy.BehaviourTree
             return this;
         }
 
+        public DecoratorBuilder<T, V> Note(string name)
+        {
+            return Note(name, null);
+        }
+
+        public DecoratorBuilder<T, V> Note(string name, string description)
+        {
+            return Note(null, name, description);
+        }
+
+        public DecoratorBuilder<T, V> Note(string key, string name, string description)
+        {
+            var node = new NoteProxy<T, V>(key, name, description)
+            {
+                Child = TargetNode
+            };
+            CurrentNode = node;
+            return this;
+        }
+
         public DecoratorBuilder<T, V> Repeat(int count)
         {
             var node = new RepeatDecorator<T, V>(count)

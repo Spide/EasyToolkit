@@ -190,6 +190,76 @@ namespace Easy.BehaviourTree.Tests
         }
 
         [Test]
+        public void testNoteProxy()
+        {
+            TestBlackboard blackboard = new TestBlackboard();
+
+            INode<TestBlackboard, string> root = TestBuilder
+                .NamedNode<PrintNode>("Idle", "Wait until another branch can run.", "idle");
+            root.Initialize(blackboard);
+
+            Assert.IsInstanceOf<NoteProxy<TestBlackboard, string>>(root);
+
+            var note = (NoteProxy<TestBlackboard, string>)root;
+            Assert.AreEqual("Idle", note.Key);
+            Assert.AreEqual("Idle", note.Name);
+            Assert.AreEqual("Wait until another branch can run.", note.Description);
+            Assert.AreEqual(Result.SUCCESS, root.Run());
+        }
+
+        [Test]
+        public void testFindNoteByKey()
+        {
+            INode<TestBlackboard, string> root = TestBuilder
+                .Sequence()
+                .AddChild(TestBuilder.KeyedNode<PrintNode>("idle", "Idle", "Fallback branch.", "idle"))
+                .AddChild(TestBuilder.KeyedNode<PrintNode>("work", "Work", "Run assigned work.", "work"))
+                .Build(new TestBlackboard());
+
+            var node = BehaviourTreeTraversal.FindByKey(root, "work");
+
+            Assert.IsNotNull(node);
+            Assert.IsTrue(BehaviourTreeTraversal.TryGetNote(node, out var note));
+            Assert.AreEqual("work", note.Key);
+            Assert.AreEqual("Work", note.Name);
+        }
+
+        [Test]
+        public void testDebugRegistryMarksLatestRunNodes()
+        {
+            var blackboard = new TestBlackboard();
+            INode<TestBlackboard, string> root = TestBuilder
+                .Selector()
+                .AddChild(TestBuilder.KeyedNode<InvokeNode>(
+                    "branch.one",
+                    "Branch one",
+                    "Runs when testVal is one.",
+                    new Func<TestBlackboard, Result>(data => data.testVal == 1 ? Result.SUCCESS : Result.FAILED)))
+                .AddChild(TestBuilder.KeyedNode<InvokeNode>(
+                    "branch.two",
+                    "Branch two",
+                    "Runs when testVal is two.",
+                    new Func<TestBlackboard, Result>(data => data.testVal == 2 ? Result.SUCCESS : Result.FAILED)))
+                .Build();
+
+            root = BehaviourTreeDebugInstrumenter.Wrap(root);
+            root.Initialize(blackboard);
+
+            blackboard.testVal = 1;
+            root.Run();
+
+            var firstBranch = BehaviourTreeTraversal.FindByKey(root, "branch.one");
+            var secondBranch = BehaviourTreeTraversal.FindByKey(root, "branch.two");
+            Assert.IsTrue(BehaviourTreeDebugRegistry.WasVisitedInLatestRun(BehaviourTreeDebugRegistry.Get(firstBranch)));
+            Assert.IsFalse(BehaviourTreeDebugRegistry.WasVisitedInLatestRun(BehaviourTreeDebugRegistry.Get(secondBranch)));
+
+            blackboard.testVal = 2;
+            root.Run();
+
+            Assert.IsTrue(BehaviourTreeDebugRegistry.WasVisitedInLatestRun(BehaviourTreeDebugRegistry.Get(secondBranch)));
+        }
+
+        [Test]
         public void testBuilderTree()
         {
             

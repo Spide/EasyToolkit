@@ -26,6 +26,21 @@ namespace Easy.BehaviourTree
             return this;
         }
 
+        public UtilitySelectorBuilder<T, V> AddChild(INode<T, V> node, Func<T, int> UtilityScoreGetter, string name)
+        {
+            return AddChild(node, UtilityScoreGetter, name, null);
+        }
+
+        public UtilitySelectorBuilder<T, V> AddChild(INode<T, V> node, Func<T, int> UtilityScoreGetter, string name, string description)
+        {
+            return AddChild(TreeBuilder<T, V>.Note(node, name, description), UtilityScoreGetter);
+        }
+
+        public UtilitySelectorBuilder<T, V> AddChild(INode<T, V> node, Func<T, int> UtilityScoreGetter, string key, string name, string description)
+        {
+            return AddChild(TreeBuilder<T, V>.Note(node, key, name, description), UtilityScoreGetter);
+        }
+
         public override UtilitySelector<T, V> Build() { 
             if(Selector.Childs.Count != Selector.UtilityScore.Count)
                 throw new Exception("Forgot to set Utlility after some child ?");
