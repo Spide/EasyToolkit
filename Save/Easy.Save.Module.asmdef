@@ -1,15 +1,7 @@
 {
-    "name": "EasyToolkit",
-    "rootNamespace": "Easy",
-    "references": [
-        "Easy.DI",
-        "Easy.Logging",
-        "Easy.Pooling",
-        "Easy.State",
-        "Easy.Control",
-        "Easy.StateMachine",
-        "Easy.Save"
-    ],
+    "name": "Easy.Save",
+    "rootNamespace": "Easy.Save",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
