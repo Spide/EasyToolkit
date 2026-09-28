@@ -1,0 +1,17 @@
+{
+    "name": "Easy.SceneFlow",
+    "rootNamespace": "Easy.SceneFlow",
+    "references": [
+        "Easy.DI",
+        "Easy.Logging"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

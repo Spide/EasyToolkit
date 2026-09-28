@@ -1,163 +1,110 @@
 # EasyToolkit
 
-A lightweight collection of reusable Unity C# modules for common gameplay and architecture tasks.
+Reusable Unity C# modules for gameplay architecture. Each module is its own UPM
+package under `Packages/`. A project takes only the modules it needs,
+straight from this repository through the Package Manager.
 
-EasyToolkit is organized as independent modules (DI, state handling, state machine, pooling, logging, behavior tree, and control contexts) so you can use only what your project needs.
-
----
+This repository is also the **only place where the modules are developed and
+tested**. It is a Unity project (the development host). Projects never keep
+local copies of the modules.
 
 ## Modules
 
-- **`Easy.DI.Module`** — small dependency-injection container with parent container chaining and constructor injection.
-- **`Easy.State.Module`** — dynamic key/value state objects and helper utilities for combining state values.
-- **`Easy.StateMachine.Module`** — generic finite state machine with regular and global (“any”) transitions.
-- **`Easy.Pooling.Module`** — generic and Unity-friendly object pools.
-- **`Easy.Logging.Module`** — colored logger wrapper around Unity logging.
-- **`Easy.BehaviourTree`** — behavior tree nodes, decorators, and builders.
-- **`Easy.Control.Module`** — event-driven control contexts with priority and propagation handling.
+| Package | Assemblies | Depends on | Purpose |
+| --- | --- | --- | --- |
+| `com.easytoolkit.logging` | `Easy.Logging` | - | Channelled colored logger with JSON-configured levels |
+| `com.easytoolkit.di` | `Easy.DI` | logging | Named DI containers, parent chaining, constructor injection, scene contexts |
+| `com.easytoolkit.sceneflow` | `Easy.SceneFlow`, `.Editor` | di, logging | Bootstrap scene, persistent role scenes, transactional level switching, loading progress, direct level Play Mode, scaffold and validator ([README](Packages/com.easytoolkit.sceneflow/README.md)) |
+| `com.easytoolkit.save` | `Easy.Save` | - | Versioned JSON saves, migrations, safe keys, atomic writes, stable identity |
+| `com.easytoolkit.state` | `Easy.State` | logging | Key/value state containers and combine helpers |
+| `com.easytoolkit.statemachine` | `Easy.StateMachine` | logging | Finite state machine with any-state transitions |
+| `com.easytoolkit.pooling` | `Easy.Pooling` | logging | Generic and Unity object pools |
+| `com.easytoolkit.control` | `Easy.Control` | logging, Input System | Priority-based control contexts with event propagation |
+| `com.easytoolkit.behaviourtree` | `Easy.BehaviourTree`, `.Editor` | logging | Behaviour trees, decorators, builders, debugger window |
+| `com.easytoolkit.character` | `Easy.Character.*` | Input System | Character motor, input adapter, camera, animation, aim IK ([README](Packages/com.easytoolkit.character/README.md)) |
 
----
+## Using modules in a project
 
-## Getting started
+Add one line per module to the project's `Packages/manifest.json`. Pin a
+release tag:
 
-1. Copy the folders you need into your Unity project (or include the whole repository under `Assets/`).
-2. Make sure the `.asmdef` files are included so Unity can compile each module assembly.
-3. Reference module namespaces in your scripts (for example: `Easy.Pooling`, `Easy.StateMachine`, etc.).
-
----
-
-## Usage examples
-
-### State (`Easy.State`)
-
-```csharp
-var baseStats = new GenericState<WeaponAttribute>();
-baseStats.Set(WeaponAttribute.DAMAGE, 100);
-
-var perks = new GenericState<WeaponAttribute>();
-perks.Set(WeaponAttribute.DAMAGE, 50);
-
-var penalties = new GenericState<WeaponAttribute>();
-penalties.Set(WeaponAttribute.DAMAGE, -20);
-
-var totalDamage = StateUtils.Sum(WeaponAttribute.DAMAGE, baseStats, perks, penalties);
-// totalDamage = 130
+```json
+"com.easytoolkit.logging": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.logging#v0.3.0",
+"com.easytoolkit.di": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.di#v0.3.0",
+"com.easytoolkit.sceneflow": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.sceneflow#v0.3.0"
 ```
 
-### State machine (`Easy.StateMachine`)
+Rules:
 
-```csharp
-var fsm = new StateMachine<MyState>();
-fsm.AddTransition(idleState, attackState, () => targetInRange);
-fsm.AddAnyTransition(deadState, () => health <= 0);
+- **List every module you need, including its EasyToolkit dependencies.** UPM
+  does not resolve Git dependencies declared inside a package's
+  `package.json`; the manifest entries satisfy them. For example, Scene Flow
+  needs `logging` and `di` listed too.
+- Use the **same tag for all modules**. Modules are released together, and one
+  tag versions the whole set.
+- Never edit modules inside a project (`Library/PackageCache` is read-only and
+  regenerated). Change them here, release a tag, and bump the tag in the
+  project.
+- To run a module's own tests inside a project, add it to `"testables"`. The
+  normal place for module tests is this repository.
+- **Windows: keep project paths short, or enable long paths for git**
+  (`git config --global core.longpaths true`). UPM clones the repository
+  under the project's `Library`. With a deep project path, the clone fails with
+  `unable to write file .git/objects/pack/...: Invalid argument`.
 
-fsm.SetState(idleState);
+## Developing and testing (this repository)
 
-// call every frame
-fsm.Tick();
-```
+- Open the repository root in Unity. `ProjectSettings/ProjectVersion.txt`
+  names the development Editor. It is deliberately an older supported version,
+  so that newer-only APIs fail here first.
+- `Packages/com.easytoolkit.*` are embedded packages. Edit them directly.
+- `Assets/Sandbox` holds the Scene Flow sandbox composition, generated by
+  `Tools > Easy Toolkit > Scene Flow > Create Or Repair Composition...`.
+  `Assets/Tests` holds cross-module integration tests (for example
+  `SceneFlowCompositionTests`). `Assets/Examples` holds usage samples.
+- Tests: every module is in `testables`. Run them from the Test Runner, or with
+  no Editor open:
 
-### Pooling (`Easy.Pooling`)
+  ```text
+  unity test . --mode EditMode --output Logs/editmode.xml
+  unity test . --mode PlayMode --output Logs/playmode.xml
+  ```
 
-```csharp
-var pool = new Pool<Bullet>(() => new Bullet(), limit: 64);
+### Compatibility rules
 
-var bullet = pool.Get();
-// ...use bullet...
-pool.Push(bullet);
-```
+- Minimum versions in `package.json` (`unity`, `com.unity.inputsystem`) are a
+  compatibility promise. Do not raise them for convenience.
+- Guard APIs that only exist in newer Unity versions with `UNITY_*_OR_NEWER`
+  defines and keep an older fallback.
+- Before a release, run the tests in the development Editor and in at least
+  one newer Editor (open a copy of the repository with it, or consume the
+  release candidate from a newer project).
+- Modules never reference game code. They only reference each other along the
+  dependency table above, without cycles.
+- Keep `.meta` files and GUIDs stable. Projects reference scripts by GUID.
+  Every file needs a `.meta` because Git packages are immutable in consumers.
 
-For Unity `MonoBehaviour` pooling, see `GameObjectPool<T>` and `Examples/EasyToolkitPoolExamples.cs`.
+### Releasing
 
-### Dependency injection (`Easy.DI`)
+1. Update the version of **every** `Packages/*/package.json` to the new
+   version, and the `dependencies` between EasyToolkit modules to match.
+2. Add the release to [CHANGELOG.md](CHANGELOG.md), with migration notes for
+   breaking changes.
+3. Run all EditMode and PlayMode tests (see Compatibility rules).
+4. Merge to `master` and tag `vX.Y.Z`. Projects move by changing the tag in
+   their manifest.
 
-```csharp
-var root = new DIContainer("Root");
-root.Bind(new AudioService());
-
-var scene = new DIContainer("Scene", root);
-scene.Bind<PlayerController>(); // constructor dependencies are resolved
-
-var player = scene.Resolve<PlayerController>();
-```
-
-Use `[ResolveBy("name")]` on constructor parameters to resolve explicit named bindings.
-
-### Control contexts (`Easy.Control`)
-
-```csharp
-public class GameplayContext : ControlContext
-{
-    [ControlEvent("Jump")]
-    private void Jump() { /* ... */ }
-}
-
-var handler = new ControlContextEventHandler();
-handler.AddContext(gameplayContext);
-gameplayContext.Activate();
-
-handler.TriggerEvent("Jump");
-```
-
-Contexts are ordered by priority; the first active context that handles an event stops propagation.
-
-### Behavior tree (`Easy.BehaviourTree`)
-
-You can construct trees manually (`Selector`, `Sequence`, decorators) or with builders (`TreeBuilder`, decorator/composite builders).
-
-See `BehaviourTree/Tests/BehaviourTreeTest.cs` for complete examples covering:
-- selectors and sequences,
-- conditional decorators,
-- repeat/running/proxy decorators,
-- builder-based tree composition,
-- utility selector usage.
-
-### Logging (`Easy.Logging`)
-
-```csharp
-private static readonly EasyLogger LOGGER =
-    LoggerFactory.GetLogger(typeof(MyClass), Color.cyan, "[MyClass]");
-
-LOGGER.Log("Hello {0}", playerName);
-LOGGER.LogWarning("Potential issue");
-LOGGER.LogError("Something failed");
-```
-
----
-
-
-## Package distribution and versioning
-
-To make EasyToolkit easier to share across projects, this repo now includes a root `package.json` so it can be consumed as a Unity Package Manager (UPM) package.
-
-### Recommended sharing workflow
-
-1. Tag releases with semantic versions (`v0.2.0`, `v0.3.0`, etc.).
-2. Consume via UPM git URL in other projects, for example:
-   - `https://github.com/<org>/EasyToolkit.git#v0.2.0`
-3. Bump `package.json` version on each release.
-4. Keep `.asmdef` references name-based (not GUID-based) for portability between repos/projects.
-
-### Suggested versioning policy
-
-- **PATCH** (`0.2.1`): bugfixes, no API break.
-- **MINOR** (`0.3.0`): backward-compatible features.
-- **MAJOR** (`1.0.0`): breaking API changes.
+Versioning: MAJOR = breaking change for consumers, MINOR = backward-compatible
+features, PATCH = fixes. Before 1.0.0, breaking changes may land in a minor
+version but must be listed in the changelog.
 
 ## Repository layout
 
-- `BehaviourTree/` — behavior tree runtime, decorators, builders, and tests
-- `Control/` — control context/event routing system
-- `DI/` — dependency injection container and Unity context binders
-- `Logging/` — logger wrappers and config
-- `Poolers/` — generic pools and Unity object pools
-- `State/` — generic state containers and helpers
-- `StateMachine/` — finite state machine implementation
-- `Examples/` — sample MonoBehaviour usage scripts
-
----
-
-## Notes
-
-- The toolkit is modular by design—import only the assemblies you need.
-- Many folders include `Tests` or `Examples` files you can use as integration references.
+```text
+Packages/com.easytoolkit.<module>/   one UPM package per module (Runtime/Editor/Tests)
+Packages/manifest.json               development host manifest (all modules testable)
+Assets/Sandbox/                      Scene Flow sandbox composition
+Assets/Tests/                        integration tests across modules
+Assets/Examples/                     usage samples
+ProjectSettings/                     development host settings
+```

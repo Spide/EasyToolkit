@@ -1,0 +1,17 @@
+{
+  "name": "Easy.Character.InputSystem",
+  "rootNamespace": "Easy.Character.InputSystem",
+  "references": [
+    "Easy.Character.Core",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

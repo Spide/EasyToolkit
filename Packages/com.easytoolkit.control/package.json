@@ -1,0 +1,18 @@
+{
+  "name": "com.easytoolkit.control",
+  "version": "0.3.0",
+  "displayName": "Easy Toolkit Control",
+  "description": "Priority-based control contexts with event propagation.",
+  "unity": "2021.3",
+  "dependencies": {
+    "com.easytoolkit.logging": "0.3.0",
+    "com.unity.inputsystem": "1.7.0"
+  },
+  "author": {
+    "name": "Easy Toolkit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spide/EasyToolkit.git"
+  }
+}

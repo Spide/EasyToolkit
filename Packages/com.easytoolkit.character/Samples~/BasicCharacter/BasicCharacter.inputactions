@@ -1,0 +1,33 @@
+{
+    "name": "BasicCharacter",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "2dca3f7a-4e48-4a21-84b5-57439323984e",
+            "actions": [
+                { "name": "Move", "type": "Value", "id": "1bda3398-a267-4ce7-a666-49869016e2ef", "expectedControlType": "Vector2" },
+                { "name": "Look", "type": "Value", "id": "21a72db3-f697-4180-a5f8-b4357131dd57", "expectedControlType": "Vector2" },
+                { "name": "Sprint", "type": "Button", "id": "c85daef8-698b-4f66-89b5-67d68b18b824", "expectedControlType": "Button" },
+                { "name": "Crouch", "type": "Button", "id": "4f6469ef-c1ea-4698-91ee-40a821f960c8", "expectedControlType": "Button" },
+                { "name": "Jump", "type": "Button", "id": "676e76c9-42b7-4dc6-a48e-7ddaa43192df", "expectedControlType": "Button" },
+                { "name": "Zoom", "type": "Value", "id": "b331f486-cfef-48ae-a7a1-41ab198c0bf3", "expectedControlType": "Vector2" }
+            ],
+            "bindings": [
+                { "name": "WASD", "id": "7c04bd4d-f1aa-4d7d-aa6e-41af71d6c275", "path": "2DVector", "action": "Move", "isComposite": true },
+                { "name": "up", "id": "90eefb81-d7aa-4582-8a33-027163c44f63", "path": "<Keyboard>/w", "action": "Move", "isPartOfComposite": true },
+                { "name": "down", "id": "6984879f-ab62-44c5-91fe-8c6391ea5330", "path": "<Keyboard>/s", "action": "Move", "isPartOfComposite": true },
+                { "name": "left", "id": "10e9d87a-4517-4441-af54-4f60f1f35c22", "path": "<Keyboard>/a", "action": "Move", "isPartOfComposite": true },
+                { "name": "right", "id": "a3470db3-63fc-47a6-b350-48cc505c970c", "path": "<Keyboard>/d", "action": "Move", "isPartOfComposite": true },
+                { "id": "c857a5f9-cfb7-4170-9df5-a8a9a1913fa8", "path": "<Gamepad>/leftStick", "action": "Move" },
+                { "id": "c9a7ec90-875d-4ad5-ada4-03db0355949c", "path": "<Mouse>/delta", "action": "Look" },
+                { "id": "59e41234-df15-4d42-b816-693cd4656c07", "path": "<Gamepad>/rightStick", "action": "Look" },
+                { "id": "63ed394d-a61e-4f17-9bd8-ad0b1364e387", "path": "<Keyboard>/leftShift", "action": "Sprint" },
+                { "id": "9c5b51b7-a0c4-4da1-8142-e52fed2fb0d4", "path": "<Keyboard>/c", "action": "Crouch" },
+                { "id": "a68259f5-eed6-4f25-a162-00288323df2b", "path": "<Keyboard>/space", "action": "Jump" },
+                { "id": "f45fc23c-7754-4982-a6a8-77a63001be95", "path": "<Gamepad>/buttonSouth", "action": "Jump" },
+                { "id": "2141ce5c-524a-419b-8dfc-29af00e4b4c8", "path": "<Mouse>/scroll", "action": "Zoom" }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

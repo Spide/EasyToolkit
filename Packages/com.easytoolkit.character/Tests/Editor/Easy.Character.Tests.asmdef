@@ -1,0 +1,29 @@
+{
+  "name": "Easy.Character.Tests",
+  "rootNamespace": "Easy.Character.Tests",
+  "references": [
+    "Easy.Character.Core",
+    "Easy.Character.InputSystem",
+    "Easy.Character.Camera",
+    "Easy.Character.Animation",
+    "Easy.Character.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}

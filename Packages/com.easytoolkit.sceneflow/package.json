@@ -1,0 +1,18 @@
+{
+  "name": "com.easytoolkit.sceneflow",
+  "version": "0.3.0",
+  "displayName": "Easy Toolkit Scene Flow",
+  "description": "Profile-driven additive scene composition: bootstrap scene, persistent role scenes, transactional level switching with rollback, loading progress and direct level Play Mode.",
+  "unity": "2021.3",
+  "dependencies": {
+    "com.easytoolkit.di": "0.3.0",
+    "com.easytoolkit.logging": "0.3.0"
+  },
+  "author": {
+    "name": "Easy Toolkit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spide/EasyToolkit.git"
+  }
+}
