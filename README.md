@@ -47,6 +47,10 @@ Rules:
   project.
 - To run a module's own tests inside a project, add it to `"testables"`. The
   normal place for module tests is this repository.
+- **Windows: keep project paths short, or enable long paths for git**
+  (`git config --global core.longpaths true`). UPM clones the repository
+  under the project's `Library`. With a deep project path, the clone fails with
+  `unable to write file .git/objects/pack/...: Invalid argument`.
 
 ## Developing and testing (this repository)
 

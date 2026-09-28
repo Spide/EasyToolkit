@@ -42,7 +42,8 @@ All modules share one version; one tag (`vX.Y.Z`) releases the whole set.
   Newer-only APIs are guarded (`FindAnyObjectByType` for 2022.2+, `GetEntityId`
   for 6000.4+).
 - Verified: EditMode 60/60 and PlayMode 4/4 on Unity 6000.0.32f1 (development
-  host). EditMode 60/60 on 6000.5.8f1.
+  host). EditMode 60/60 and PlayMode 4/4 on 6000.5.8f1 in a consumer project
+  that took every module through `?path=` Git URLs.
 
 ## 0.2.0
 
