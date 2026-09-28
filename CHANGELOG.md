@@ -2,7 +2,7 @@
 
 All modules share one version; one tag (`vX.Y.Z`) releases the whole set.
 
-## 0.3.0 - unreleased
+## 0.3.0 - 2026-09-28
 
 ### Breaking
 
