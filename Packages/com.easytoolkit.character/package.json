@@ -1,0 +1,24 @@
+{
+  "name": "com.easytoolkit.character",
+  "version": "0.3.0",
+  "displayName": "Easy Toolkit Character",
+  "description": "Character motor, Input System adapter, camera modes, locomotion animation and aim IK.",
+  "unity": "2021.3",
+  "dependencies": {
+    "com.unity.inputsystem": "1.7.0"
+  },
+  "samples": [
+    {
+      "displayName": "Basic Character",
+      "description": "A code-built capsule character demonstrating the motor, camera, and configurable input adapter.",
+      "path": "Samples~/BasicCharacter"
+    }
+  ],
+  "author": {
+    "name": "Easy Toolkit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spide/EasyToolkit.git"
+  }
+}

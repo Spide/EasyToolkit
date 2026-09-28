@@ -1,0 +1,14 @@
+{
+  "name": "com.easytoolkit.logging",
+  "version": "0.3.0",
+  "displayName": "Easy Toolkit Logging",
+  "description": "Channelled colored logger over Unity logging with JSON-configured levels.",
+  "unity": "2021.3",
+  "author": {
+    "name": "Easy Toolkit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spide/EasyToolkit.git"
+  }
+}

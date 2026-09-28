@@ -1,0 +1,22 @@
+{
+    "name": "EasyToolkit.Examples",
+    "rootNamespace": "Easy.Examples",
+    "references": [
+        "Easy.DI",
+        "Easy.Logging",
+        "Easy.Pooling",
+        "Easy.State",
+        "Easy.Control",
+        "Easy.StateMachine",
+        "Easy.Save"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
