@@ -2,7 +2,7 @@
 
 A lightweight collection of reusable Unity C# modules for common gameplay and architecture tasks.
 
-EasyToolkit is organized as independent modules (DI, state handling, state machine, pooling, logging, behavior tree, and control contexts) so you can use only what your project needs.
+EasyToolkit is organized as independent modules (DI, scene flow, save, state handling, state machine, pooling, logging, behavior tree, control contexts and character) so you can use only what your project needs. Each module has its own assembly definition.
 
 ---
 
@@ -15,6 +15,9 @@ EasyToolkit is organized as independent modules (DI, state handling, state machi
 - **`Easy.Logging.Module`** — colored logger wrapper around Unity logging.
 - **`Easy.BehaviourTree`** — behavior tree nodes, decorators, and builders.
 - **`Easy.Control.Module`** — event-driven control contexts with priority and propagation handling.
+- **`Easy.Save`** — versioned JSON saves with migrations, safe keys, atomic writes and stable identity.
+- **`Easy.SceneFlow`** — profile-driven additive scene composition: bootstrap scene, persistent role scenes with DI contexts, transactional level switching with rollback, loading progress and direct level Play Mode. See `SceneFlow/README.md`.
+- **`Easy.Character.*`** — character motor, Input System adapter, camera modes, locomotion animation and aim IK (Core, InputSystem, Camera, Animation, Editor). See `Character/README.md`.
 
 ---
 
@@ -112,6 +115,19 @@ See `BehaviourTree/Tests/BehaviourTreeTest.cs` for complete examples covering:
 - builder-based tree composition,
 - utility selector usage.
 
+### Scene flow (`Easy.SceneFlow`)
+
+```csharp
+// After startup, from any scene:
+if (SceneFlowContexts.TryResolveGlobal(out ILevelLoader loader))
+{
+    LevelLoadResult result = await loader.LoadLevelAsync(new LevelLoadRequest("sample_level"));
+    if (!result.Succeeded) Debug.LogWarning(result);
+}
+```
+
+`Tools > Easy Toolkit > Scene Flow > Create Or Repair Composition...` scaffolds the Initialization, Loading, Systems, UI, Debug, MainMenu and SampleLevel scenes plus profile, catalog and Build Settings. Persistent systems that follow level changes implement `ILevelTransitionParticipant`.
+
 ### Logging (`Easy.Logging`)
 
 ```csharp
@@ -151,6 +167,9 @@ To make EasyToolkit easier to share across projects, this repo now includes a ro
 - `DI/` — dependency injection container and Unity context binders
 - `Logging/` — logger wrappers and config
 - `Poolers/` — generic pools and Unity object pools
+- `Save/` — versioned save system, serializers, migrations and tests
+- `SceneFlow/` — scene composition runtime, editor scaffold/validator and tests
+- `Character/` — character motor, input, camera, animation, editor tools, tests and `Samples~`
 - `State/` — generic state containers and helpers
 - `StateMachine/` — finite state machine implementation
 - `Examples/` — sample MonoBehaviour usage scripts
@@ -161,3 +180,11 @@ To make EasyToolkit easier to share across projects, this repo now includes a ro
 
 - The toolkit is modular by design—import only the assemblies you need.
 - Many folders include `Tests` or `Examples` files you can use as integration references.
+- To run the package tests in a consuming project, add `"testables": ["com.easytoolkit.core"]` to its `Packages/manifest.json`.
+- Minimum Unity and Input System versions are declared in `package.json`; newer-only APIs are guarded with `UNITY_*_OR_NEWER` defines.
+
+## Changes in 0.3.0
+
+- Added `SceneFlow` and `Character` modules.
+- Behaviour tree debugger: snapshot copy/save, property-backed trees, safer target handling.
+- **Breaking (Control):** `ControlContextHandler.cs` renamed to `ControlContextEventHandler.cs` (class name unchanged); `ControlContext` priority is now a constructor argument (`protected ControlContext(int priority = 0)`) instead of a mutable `priority` field; activation events fire only on actual state changes; per-call logging removed from hot paths.

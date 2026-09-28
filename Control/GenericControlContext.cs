@@ -2,11 +2,16 @@ using System;
 
 namespace Easy.Control
 {
-    public class GenericControlContext : ControlContext
+    public sealed class GenericControlContext : ControlContext
     {
         public GenericControlContext(int priority, params EventAction[] eventActions)
+            : base(priority)
         {
-            Array.ForEach(eventActions, e => SetEvent(e.EventName, e.Action));
+            for (int i = 0; i < eventActions.Length; i++)
+            {
+                EventAction eventAction = eventActions[i];
+                SetEvent(eventAction.EventName, eventAction.Action.Method);
+            }
         }
     }
 }

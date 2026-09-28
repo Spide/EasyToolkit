@@ -1,0 +1,19 @@
+{
+  "name": "Easy.Character.BasicSample",
+  "rootNamespace": "Easy.Character.Samples",
+  "references": [
+    "Easy.Character.Core",
+    "Easy.Character.InputSystem",
+    "Easy.Character.Camera",
+    "Easy.Character.Animation"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

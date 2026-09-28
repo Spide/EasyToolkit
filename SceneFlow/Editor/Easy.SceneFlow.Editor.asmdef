@@ -1,0 +1,19 @@
+{
+    "name": "Easy.SceneFlow.Editor",
+    "rootNamespace": "Easy.SceneFlow.Editor",
+    "references": [
+        "Easy.SceneFlow",
+        "Easy.DI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Easy.Character.Editor",
+  "rootNamespace": "Easy.Character.Editor",
+  "references": [
+    "Easy.Character.Core",
+    "Easy.Character.Animation"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

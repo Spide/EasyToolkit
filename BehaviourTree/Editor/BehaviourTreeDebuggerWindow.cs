@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using Easy.BehaviourTree;
 using UnityEditor;
 using UnityEngine;
@@ -100,8 +103,385 @@ namespace Easy.BehaviourTree.Editor
                 if (GUILayout.Button("Clear State", EditorStyles.toolbarButton, GUILayout.Width(82f)))
                     BehaviourTreeDebugRegistry.Clear();
 
+                using (new EditorGUI.DisabledScope(rootNode == null))
+                {
+                    if (GUILayout.Button("Copy Snapshot", EditorStyles.toolbarButton, GUILayout.Width(104f)))
+                        CopySnapshot();
+
+                    if (GUILayout.Button("Save Snapshot...", EditorStyles.toolbarButton, GUILayout.Width(112f)))
+                        SaveSnapshot();
+                }
+
                 GUILayout.FlexibleSpace();
             }
+        }
+
+        private void CopySnapshot()
+        {
+            string snapshot = CaptureSnapshot();
+            EditorGUIUtility.systemCopyBuffer = snapshot;
+            ShowNotification(new GUIContent("Behaviour tree snapshot copied."));
+        }
+
+        private void SaveSnapshot()
+        {
+            string snapshot = CaptureSnapshot();
+            string projectDirectory = Directory.GetParent(Application.dataPath)?.FullName
+                ?? Application.dataPath;
+            string path = EditorUtility.SaveFilePanel(
+                "Save Behaviour Tree Snapshot",
+                projectDirectory,
+                BuildSnapshotFileName(),
+                "txt");
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            try
+            {
+                File.WriteAllText(path, snapshot, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+                ShowNotification(new GUIContent("Behaviour tree snapshot saved."));
+            }
+            catch (Exception exception)
+            {
+                EditorUtility.DisplayDialog(
+                    "Snapshot Save Failed",
+                    exception.GetType().Name + ": " + exception.Message,
+                    "OK");
+            }
+        }
+
+        private string CaptureSnapshot()
+        {
+            RefreshFieldValues();
+
+            var builder = new StringBuilder(4096);
+            builder.AppendLine("EasyToolkit Behaviour Tree Debugger Snapshot");
+            builder.Append("Captured UTC: ").AppendLine(DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture));
+            builder.Append("Unity: ").AppendLine(Application.unityVersion);
+            builder.Append("Editor state: ")
+                .Append(EditorApplication.isPlaying ? "Playing" : "Editing")
+                .Append(EditorApplication.isPaused ? ", Paused" : string.Empty)
+                .AppendLine();
+            if (EditorApplication.isPlaying)
+                builder.Append("Frame: ").Append(Time.frameCount).AppendLine();
+
+            AppendTargetSnapshot(builder);
+            AppendComponentSnapshot(builder);
+            AppendTreeSnapshot(builder);
+            AppendBlackboardSnapshot(builder);
+            return builder.ToString();
+        }
+
+        private void AppendTargetSnapshot(StringBuilder builder)
+        {
+            builder.AppendLine();
+            builder.AppendLine("Target");
+            builder.Append("  Object: ").AppendLine(FormatObject(targetObject));
+            if (fields.Count == 0)
+            {
+                builder.AppendLine("  Tree member: <none>");
+                return;
+            }
+
+            TreeField field = fields[Mathf.Clamp(selectedFieldIndex, 0, fields.Count - 1)];
+            builder.Append("  Owner: ").AppendLine(FormatObject(field.Owner));
+            builder.Append("  Tree member: ")
+                .Append(field.Owner.GetType().FullName)
+                .Append('.')
+                .AppendLine(field.Name);
+            builder.Append("  Root type: ")
+                .AppendLine(rootNode != null ? UnwrapObservedProxy(rootNode).GetType().FullName : "<null>");
+        }
+
+        private void AppendComponentSnapshot(StringBuilder builder)
+        {
+            GameObject gameObject = targetObject as GameObject;
+            if (gameObject == null && targetObject is Component component)
+                gameObject = component.gameObject;
+            if (gameObject == null)
+                return;
+
+            builder.AppendLine();
+            builder.AppendLine("Component Diagnostics");
+            Component[] components = gameObject.GetComponents<Component>();
+            for (int i = 0; i < components.Length; i++)
+            {
+                Component current = components[i];
+                if (current == null || !IsDiagnosticType(current.GetType()))
+                    continue;
+
+                Type type = current.GetType();
+                builder.Append("  ").AppendLine(type.FullName);
+                PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                for (int propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++)
+                {
+                    PropertyInfo property = properties[propertyIndex];
+                    if (!IsDiagnosticProperty(property))
+                        continue;
+
+                    object value;
+                    try
+                    {
+                        value = property.GetValue(current);
+                    }
+                    catch (Exception exception)
+                    {
+                        builder.Append("    ").Append(property.Name)
+                            .Append(" = <").Append(exception.GetType().Name).AppendLine(">");
+                        continue;
+                    }
+
+                    if (value is IDictionary dictionary)
+                    {
+                        AppendDictionary(builder, "  " + property.Name, dictionary);
+                        continue;
+                    }
+
+                    if (value is IEnumerable && value is not string)
+                        continue;
+
+                    builder.Append("    ").Append(property.Name).Append(" = ")
+                        .AppendLine(FormatValue(value));
+                }
+            }
+        }
+
+        private static bool IsDiagnosticType(Type type)
+        {
+            string typeNamespace = type?.Namespace;
+            // Diagnose first-party and behaviour-tree types; skip engine and BCL types.
+            return !string.IsNullOrEmpty(typeNamespace)
+                && !typeNamespace.StartsWith("System", StringComparison.Ordinal)
+                && !typeNamespace.StartsWith("Unity", StringComparison.Ordinal)
+                && !typeNamespace.StartsWith("TMPro", StringComparison.Ordinal);
+        }
+
+        private static bool IsDiagnosticProperty(PropertyInfo property)
+        {
+            if (property == null
+                || property.GetMethod == null
+                || property.GetMethod.IsStatic
+                || property.GetIndexParameters().Length != 0)
+            {
+                return false;
+            }
+
+            return IsDiagnosticType(property.DeclaringType);
+        }
+
+        private void AppendTreeSnapshot(StringBuilder builder)
+        {
+            builder.AppendLine();
+            builder.Append("Nodes (").Append(graphNodes.Count).AppendLine(")");
+            if (graphNodes.Count == 0)
+            {
+                builder.AppendLine("  <none>");
+                return;
+            }
+
+            for (int i = 0; i < graphNodes.Count; i++)
+            {
+                GraphNode node = graphNodes[i];
+                BehaviourTreeDebugInfo info = BehaviourTreeDebugRegistry.Get(node.Source);
+                builder.Append(' ', node.Depth * 2)
+                    .Append("- [").Append(i).Append("] ")
+                    .Append(node.Title)
+                    .Append(" | ").Append(node.Kind)
+                    .Append(" | ").Append(node.Source != null ? node.Source.GetType().FullName : "<null>")
+                    .Append(" | ").AppendLine(FormatState(info));
+
+                if (!string.IsNullOrEmpty(node.Description))
+                {
+                    builder.Append(' ', node.Depth * 2 + 4)
+                        .Append("Description: ")
+                        .AppendLine(node.Description);
+                }
+
+                if (info != null && !string.IsNullOrEmpty(info.LastException))
+                {
+                    builder.Append(' ', node.Depth * 2 + 4)
+                        .Append("Exception: ")
+                        .AppendLine(info.LastException);
+                }
+            }
+        }
+
+        private void AppendBlackboardSnapshot(StringBuilder builder)
+        {
+            builder.AppendLine();
+            builder.AppendLine("Blackboard");
+            object blackboard = FindBlackboard(rootNode);
+            if (blackboard == null)
+            {
+                builder.AppendLine("  <not available>");
+                return;
+            }
+
+            Type type = blackboard.GetType();
+            builder.Append("  Type: ").AppendLine(type.FullName);
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            for (int i = 0; i < properties.Length; i++)
+            {
+                PropertyInfo property = properties[i];
+                if (property.GetMethod == null || property.GetIndexParameters().Length != 0)
+                    continue;
+
+                object value;
+                try
+                {
+                    value = property.GetValue(blackboard);
+                }
+                catch (Exception exception)
+                {
+                    builder.Append("  ").Append(property.Name)
+                        .Append(" = <").Append(exception.GetType().Name).AppendLine(">");
+                    continue;
+                }
+
+                if (value is IDictionary dictionary)
+                {
+                    AppendDictionary(builder, property.Name, dictionary);
+                    continue;
+                }
+
+                builder.Append("  ").Append(property.Name).Append(" = ")
+                    .AppendLine(FormatValue(value));
+            }
+        }
+
+        private static void AppendDictionary(StringBuilder builder, string name, IDictionary dictionary)
+        {
+            builder.Append("  ").Append(name).Append(" (").Append(dictionary.Count).AppendLine(")");
+            foreach (DictionaryEntry entry in dictionary)
+            {
+                builder.Append("    ").Append(FormatValue(entry.Key)).Append(" = ")
+                    .AppendLine(FormatValue(entry.Value));
+            }
+        }
+
+        private static object FindBlackboard(object node)
+        {
+            node = UnwrapObservedProxy(node);
+            if (node == null)
+                return null;
+
+            Type type = node.GetType();
+            while (type != null)
+            {
+                FieldInfo field = type.GetField(
+                    "blackboard",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                if (field != null)
+                    return field.GetValue(node);
+
+                type = type.BaseType;
+            }
+
+            return null;
+        }
+
+        private string BuildSnapshotFileName()
+        {
+            string targetName = targetObject != null ? targetObject.name : "BehaviourTree";
+            foreach (char invalid in Path.GetInvalidFileNameChars())
+                targetName = targetName.Replace(invalid, '_');
+
+            return targetName + "_BehaviourTree_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt";
+        }
+
+        private static string FormatObject(object value)
+        {
+            if (value is UnityEngine.Object destroyedObject && destroyedObject == null)
+                return "<destroyed " + value.GetType().FullName + ">";
+
+            if (value is Component component)
+                return GetHierarchyPath(component.transform) + " (" + component.GetType().FullName + ", " + ObjectId(component) + ")";
+
+            if (value is GameObject gameObject)
+                return GetHierarchyPath(gameObject.transform) + " (GameObject, " + ObjectId(gameObject) + ")";
+
+            if (value is UnityEngine.Object unityObject)
+                return unityObject.name + " (" + unityObject.GetType().FullName + ", " + ObjectId(unityObject) + ")";
+
+            return value != null ? value.GetType().FullName : "<null>";
+        }
+
+        private static string ObjectId(UnityEngine.Object value)
+        {
+#if UNITY_6000_4_OR_NEWER
+            return value.GetEntityId().ToString();
+#else
+            return value.GetInstanceID().ToString(CultureInfo.InvariantCulture);
+#endif
+        }
+
+        private static string FormatValue(object value)
+        {
+            if (value == null)
+                return "<null>";
+
+            if (value is string text)
+                return "\"" + text.Replace("\r", "\\r").Replace("\n", "\\n") + "\"";
+
+            if (value is UnityEngine.Object)
+                return FormatObject(value);
+
+            if (value is IFormattable formattable)
+                return formattable.ToString(null, CultureInfo.InvariantCulture);
+
+            Type type = value.GetType();
+            if (type.IsValueType && IsDiagnosticType(type))
+                return FormatStructuredValue(value, type);
+
+            return value.ToString();
+        }
+
+        private static string FormatStructuredValue(object value, Type type)
+        {
+            var builder = new StringBuilder();
+            builder.Append(type.Name).Append(" { ");
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            int written = 0;
+            for (int i = 0; i < properties.Length && written < 12; i++)
+            {
+                PropertyInfo property = properties[i];
+                if (property.GetMethod == null || property.GetIndexParameters().Length != 0)
+                    continue;
+
+                object propertyValue;
+                try
+                {
+                    propertyValue = property.GetValue(value);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+
+                if (written > 0)
+                    builder.Append(", ");
+                builder.Append(property.Name).Append('=').Append(FormatValue(propertyValue));
+                written++;
+            }
+
+            return builder.Append(" }").ToString();
+        }
+
+        private static string GetHierarchyPath(Transform transform)
+        {
+            if (transform == null)
+                return "<destroyed>";
+
+            var builder = new StringBuilder(transform.name);
+            Transform parent = transform.parent;
+            while (parent != null)
+            {
+                builder.Insert(0, '/');
+                builder.Insert(0, parent.name);
+                parent = parent.parent;
+            }
+
+            return builder.ToString();
         }
 
         private void DrawGraph()
@@ -188,7 +568,13 @@ namespace Easy.BehaviourTree.Editor
                 return;
             }
 
-            if (!field.Field.FieldType.IsAssignableFrom(wrapped.GetType()))
+            if (!field.CanWrite)
+            {
+                ShowNotification(new GUIContent("Selected tree member is read-only and cannot be instrumented."));
+                return;
+            }
+
+            if (!field.MemberType.IsAssignableFrom(wrapped.GetType()))
             {
                 ShowNotification(new GUIContent("Field type must be assignable from INode<T,V> to store an instrumented wrapper."));
                 return;
@@ -196,7 +582,7 @@ namespace Easy.BehaviourTree.Editor
 
             try
             {
-                field.Field.SetValue(field.Owner, wrapped);
+                field.SetValue(wrapped);
                 field.Value = wrapped;
                 rootNode = wrapped;
                 RefreshGraph();
@@ -225,6 +611,25 @@ namespace Easy.BehaviourTree.Editor
                     fields.Add(new TreeField(owner, field, value));
                 }
 
+                foreach (var property in type.GetProperties(flags))
+                {
+                    if (!IsNodeType(property.PropertyType)
+                        || property.GetIndexParameters().Length != 0
+                        || property.GetMethod == null)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        var value = property.GetValue(owner);
+                        fields.Add(new TreeField(owner, property, value));
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
                 type = type.BaseType;
             }
         }
@@ -247,7 +652,25 @@ namespace Easy.BehaviourTree.Editor
             for (int i = 0; i < fields.Count; i++)
             {
                 var field = fields[i];
-                var value = field.Field.GetValue(field.Owner);
+                if (!field.IsOwnerAlive)
+                {
+                    targetObject = null;
+                    RefreshFields();
+                    return;
+                }
+
+                object value;
+                try
+                {
+                    value = field.GetValue();
+                }
+                catch (Exception)
+                {
+                    targetObject = null;
+                    RefreshFields();
+                    return;
+                }
+
                 if (ReferenceEquals(value, field.Value))
                     continue;
 
@@ -326,7 +749,9 @@ namespace Easy.BehaviourTree.Editor
 
             var names = new string[fields.Count];
             for (int i = 0; i < fields.Count; i++)
-                names[i] = fields[i].Owner.GetType().Name + "." + fields[i].Field.Name;
+            {
+                names[i] = fields[i].Owner.GetType().Name + "." + fields[i].Name;
+            }
 
             return names;
         }
@@ -587,9 +1012,37 @@ namespace Easy.BehaviourTree.Editor
                 Value = value;
             }
 
+            public TreeField(object owner, PropertyInfo property, object value)
+            {
+                Owner = owner;
+                Property = property;
+                Value = value;
+            }
+
             public object Owner { get; }
             public FieldInfo Field { get; }
+            public PropertyInfo Property { get; }
+            public string Name => Field != null ? Field.Name : Property.Name;
+            public Type MemberType => Field != null ? Field.FieldType : Property.PropertyType;
+            public bool CanWrite => Field != null || Property.SetMethod != null;
+            public bool IsOwnerAlive => Owner is not UnityEngine.Object unityOwner || unityOwner != null;
             public object Value { get; set; }
+
+            public object GetValue()
+            {
+                return Field != null ? Field.GetValue(Owner) : Property.GetValue(Owner);
+            }
+
+            public void SetValue(object value)
+            {
+                if (Field != null)
+                {
+                    Field.SetValue(Owner, value);
+                    return;
+                }
+
+                Property.SetValue(Owner, value);
+            }
         }
 
         private sealed class GraphNode

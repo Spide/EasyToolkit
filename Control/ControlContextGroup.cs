@@ -1,53 +1,53 @@
 using System;
-using Easy.Logging;
-using UnityEngine;
 
 namespace Easy.Control
 {
-    public class ControlContextGroup : IControlContext
+    public sealed class ControlContextGroup : IControlContext
     {
-        private static readonly EasyLogger LOGGER = LoggerFactory.GetLogger(typeof(ControlContextGroup), Color.Lerp(Color.white, Color.blue, 0.5f), "[ControlContextGroup]");
-
-        private int priority = 0;
-        public int Priority { get { return priority; } }
-
-        protected bool isActive = false;
-        public bool IsActive { get => isActive; }
-
-        public event Action<IControlContext, bool> OnActiveStatusChanged;
-
-        private readonly ControlContextEventHandler controlContextHandler = new ControlContextEventHandler();
+        private readonly ControlContextEventHandler eventHandler = new();
 
         public ControlContextGroup(int priority, params IControlContext[] contexts)
         {
-            this.priority = priority;
-            controlContextHandler.AddContext(contexts);
+            Priority = priority;
+            eventHandler.AddContext(contexts);
         }
+
+        public event Action<IControlContext, bool> OnActiveStatusChanged;
+
+        public int Priority { get; }
+        public bool IsActive { get; private set; }
 
         public void AddContext(params IControlContext[] contexts)
         {
-            controlContextHandler.AddContext(contexts);
+            eventHandler.AddContext(contexts);
         }
+
         public void RemoveContext(params IControlContext[] contexts)
         {
-            controlContextHandler.RemoveContext(contexts);
+            eventHandler.RemoveContext(contexts);
         }
 
         public void Activate()
         {
-            isActive = true;
-            OnActiveStatusChanged?.Invoke(this, IsActive);
+            if (IsActive)
+                return;
+
+            IsActive = true;
+            OnActiveStatusChanged?.Invoke(this, true);
         }
 
         public void Deactivate()
         {
-            isActive = false;
-            OnActiveStatusChanged?.Invoke(this, IsActive);
+            if (!IsActive)
+                return;
+
+            IsActive = false;
+            OnActiveStatusChanged?.Invoke(this, false);
         }
 
         public bool On(string eventName, params object[] parameters)
         {
-            return controlContextHandler.TriggerEvent(eventName, parameters);
+            return eventHandler.TriggerEvent(eventName, parameters);
         }
     }
 }

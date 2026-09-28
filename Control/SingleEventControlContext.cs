@@ -3,44 +3,55 @@ using UnityEngine.InputSystem;
 
 namespace Easy.Control
 {
-    public class SingleEventControlContext : IControlContext
+    public sealed class SingleEventControlContext : IControlContext
     {
         private readonly string eventName;
         private readonly Action<InputAction.CallbackContext> action;
 
-        public int Priority { get; } = 0;
-        public bool IsActive { get; protected set; }
+        public SingleEventControlContext(
+            int priority,
+            string eventName,
+            Action<InputAction.CallbackContext> action)
+        {
+            Priority = priority;
+            this.eventName = eventName;
+            this.action = action;
+        }
 
         public event Action<IControlContext, bool> OnActiveStatusChanged;
 
-        public SingleEventControlContext(int priority, string eventName, Action<InputAction.CallbackContext> action)
-        {
-            this.eventName = eventName;
-            this.action = action;
-            this.Priority = priority;
-        }
+        public int Priority { get; }
+        public bool IsActive { get; private set; }
 
         public void Activate()
         {
+            if (IsActive)
+                return;
+
             IsActive = true;
-            OnActiveStatusChanged?.Invoke(this, IsActive);
+            OnActiveStatusChanged?.Invoke(this, true);
         }
 
         public void Deactivate()
         {
+            if (!IsActive)
+                return;
+
             IsActive = false;
-            OnActiveStatusChanged?.Invoke(this, IsActive);
+            OnActiveStatusChanged?.Invoke(this, false);
         }
 
-        public bool On(string eventName, params object[] parameters)
+        public bool On(string triggeredEventName, params object[] parameters)
         {
-            if (this.eventName.Equals(eventName))
+            if (!eventName.Equals(triggeredEventName, StringComparison.Ordinal)
+                || parameters.Length == 0
+                || parameters[0] is not InputAction.CallbackContext callbackContext)
             {
-                action.Invoke((InputAction.CallbackContext)parameters[0]);
-                return true;
+                return false;
             }
 
-            return false;
+            action.Invoke(callbackContext);
+            return true;
         }
     }
 }

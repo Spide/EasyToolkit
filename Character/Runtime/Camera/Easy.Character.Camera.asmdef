@@ -1,0 +1,16 @@
+{
+  "name": "Easy.Character.Camera",
+  "rootNamespace": "Easy.Character.CameraSystem",
+  "references": [
+    "Easy.Character.Core"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

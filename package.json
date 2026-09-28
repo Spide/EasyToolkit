@@ -1,8 +1,8 @@
 {
   "name": "com.easytoolkit.core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "displayName": "EasyToolkit",
-  "description": "A modular Unity toolkit with DI, state, state machine, pooling, logging, control contexts, and behaviour tree utilities.",
+  "description": "A modular Unity toolkit: DI, scene flow (bootstrap and transactional level loading), save, state, state machine, pooling, logging, control contexts, behaviour tree and character motor/camera/animation.",
   "unity": "2021.3",
   "author": {
     "name": "EasyToolkit Contributors"
@@ -13,9 +13,19 @@
     "di",
     "pooling",
     "state-machine",
-    "behaviour-tree"
+    "behaviour-tree",
+    "scene-loading",
+    "character-controller",
+    "save"
   ],
   "dependencies": {
     "com.unity.inputsystem": "1.7.0"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Basic Character",
+      "description": "A code-built capsule character demonstrating the motor, camera, and configurable input adapter.",
+      "path": "Character/Samples~/BasicCharacter"
+    }
+  ]
 }
