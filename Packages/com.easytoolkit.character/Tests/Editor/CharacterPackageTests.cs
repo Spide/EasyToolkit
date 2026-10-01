@@ -741,48 +741,51 @@ namespace Easy.Character.Tests
                 out _,
                 out _);
 
-            long before = System.GC.GetAllocatedBytesForCurrentThread();
-            for (int i = 0; i < 1024; i++)
-            {
-                velocity = CharacterMotor.AdvancePlanarVelocity(
-                    velocity,
-                    Vector3.forward * 4f,
-                    12f,
-                    0.016f);
-                sink += CharacterMotor.CalculateMovementSpeed(settings, command);
-                sink += CharacterMotor.AdvanceExplicitFacingRotation(
-                    90f, 0f, 480f, 720f, 1080f, 0.016f, out _);
-                sink += CharacterCameraRig.CalculateSmoothedBlend(12f, 0.016f);
-                sink += CharacterAnimatorDriver.CalculatePlaybackMultiplier(
-                    4f, 0.15f, 0.8f, 2.5f, 8f, 1.35f);
-                sink += CharacterAnimatorDriver.CalculateSprintLayerWeight(
-                    4f, true, 2.5f, 8f);
-                CharacterAimController.CalculateLocalAngles(
-                    Quaternion.identity,
-                    Vector3.zero,
-                    new Vector3(1f, 1f, 1f),
-                    out aimYaw,
-                    out aimPitch);
-                sink += aimYaw + aimPitch;
-                sink += CharacterAimController.CalculateRootTurnDelta(
-                    70f,
-                    false,
-                    CharacterAimSettings.Default,
-                    12f,
-                    out _);
-                sink += CharacterAimController.AdvanceRootTurn(
-                    70f,
-                    false,
-                    0f,
-                    CharacterAimSettings.Default,
-                    0.016f,
-                    out _,
-                    out _);
-            }
-            long after = System.GC.GetAllocatedBytesForCurrentThread();
+            long allocated = AllocationProbe.Measure(
+                null,
+                () =>
+                {
+                    for (int i = 0; i < 16; i++)
+                    {
+                        velocity = CharacterMotor.AdvancePlanarVelocity(
+                            velocity,
+                            Vector3.forward * 4f,
+                            12f,
+                            0.016f);
+                        sink += CharacterMotor.CalculateMovementSpeed(settings, command);
+                        sink += CharacterMotor.AdvanceExplicitFacingRotation(
+                            90f, 0f, 480f, 720f, 1080f, 0.016f, out _);
+                        sink += CharacterCameraRig.CalculateSmoothedBlend(12f, 0.016f);
+                        sink += CharacterAnimatorDriver.CalculatePlaybackMultiplier(
+                            4f, 0.15f, 0.8f, 2.5f, 8f, 1.35f);
+                        sink += CharacterAnimatorDriver.CalculateSprintLayerWeight(
+                            4f, true, 2.5f, 8f);
+                        CharacterAimController.CalculateLocalAngles(
+                            Quaternion.identity,
+                            Vector3.zero,
+                            new Vector3(1f, 1f, 1f),
+                            out aimYaw,
+                            out aimPitch);
+                        sink += aimYaw + aimPitch;
+                        sink += CharacterAimController.CalculateRootTurnDelta(
+                            70f,
+                            false,
+                            CharacterAimSettings.Default,
+                            12f,
+                            out _);
+                        sink += CharacterAimController.AdvanceRootTurn(
+                            70f,
+                            false,
+                            0f,
+                            CharacterAimSettings.Default,
+                            0.016f,
+                            out _,
+                            out _);
+                    }
+                });
 
             Assert.AreNotEqual(float.MinValue, sink + velocity.x);
-            Assert.AreEqual(before, after);
+            Assert.AreEqual(0L, allocated, "Runtime math hot paths allocated.");
         }
 
         [Test]

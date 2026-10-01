@@ -6,7 +6,9 @@
     "Easy.Character.InputSystem",
     "Easy.Character.Camera",
     "Easy.Character.Animation",
-    "Easy.Character.Editor"
+    "Easy.Character.Editor",
+    "Unity.InputSystem",
+    "Unity.InputSystem.TestFramework"
   ],
   "includePlatforms": [
     "Editor"
