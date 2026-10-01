@@ -1,11 +1,11 @@
 {
   "name": "com.easytoolkit.di",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "displayName": "Easy Toolkit DI",
   "description": "Named dependency-injection containers with parent chaining, constructor injection and Unity scene contexts.",
   "unity": "2021.3",
   "dependencies": {
-    "com.easytoolkit.logging": "0.3.0"
+    "com.easytoolkit.logging": "0.3.1"
   },
   "author": {
     "name": "Easy Toolkit"

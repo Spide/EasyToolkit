@@ -1,6 +1,6 @@
 {
   "name": "com.easytoolkit.character",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "displayName": "Easy Toolkit Character",
   "description": "Character motor, Input System adapter, camera modes, locomotion animation and aim IK.",
   "unity": "2021.3",
