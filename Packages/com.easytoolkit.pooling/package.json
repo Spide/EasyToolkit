@@ -1,11 +1,11 @@
 {
   "name": "com.easytoolkit.pooling",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "displayName": "Easy Toolkit Pooling",
   "description": "Generic and Unity object pools.",
   "unity": "2021.3",
   "dependencies": {
-    "com.easytoolkit.logging": "0.3.0"
+    "com.easytoolkit.logging": "0.3.1"
   },
   "author": {
     "name": "Easy Toolkit"

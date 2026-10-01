@@ -2,6 +2,33 @@
 
 All modules share one version; one tag (`vX.Y.Z`) releases the whole set.
 
+## 0.3.1 - 2026-10-01
+
+### Added
+
+- `com.easytoolkit.state`: `GenericState<K>.Plus(K key, float value)` adds a
+  float to the stored number and returns the new total. A missing key counts as
+  0; stored numeric values (int, float, double, ...) are converted; the sum is
+  stored as float; any other stored type throws `InvalidCastException` and
+  leaves the state unchanged. `OnChange` is raised. Not part of `IState<K>`,
+  so existing implementations are unaffected.
+
+### Changed
+
+- `com.easytoolkit.character` tests: the zero-allocation check of the runtime
+  math hot paths now measures real managed allocations through the profiler
+  `GC.Alloc` recorder (`AllocationProbe`). The previous
+  `GC.GetAllocatedBytesForCurrentThread` delta always read 0 in the Editor's
+  Mono runtime. New `CharacterPackageAllocationTests` cover the Input System
+  adapter with `InputTestFixture`. The test asmdef references
+  `Unity.InputSystem` and `Unity.InputSystem.TestFramework` (shipped with
+  Input System 1.7.0, so no minimum version changed).
+
+### Compatibility
+
+- Minimum versions are unchanged (`unity: 2021.3`, Input System `1.7.0`).
+  No runtime behavior changed apart from the added `Plus` overload.
+
 ## 0.3.0 - 2026-09-28
 
 ### Breaking
