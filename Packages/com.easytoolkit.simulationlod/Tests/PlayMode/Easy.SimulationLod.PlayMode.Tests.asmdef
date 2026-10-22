@@ -1,0 +1,26 @@
+{
+  "name": "Easy.SimulationLod.PlayMode.Tests",
+  "rootNamespace": "Easy.SimulationLod.Tests",
+  "references": [
+    "Easy.SimulationLod",
+    "Easy.SimulationLod.BehaviourTree",
+    "Easy.BehaviourTree",
+    "Easy.SimulationLod.Tests.Support"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}

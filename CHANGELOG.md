@@ -2,6 +2,49 @@
 
 All modules share one version; one tag (`vX.Y.Z`) releases the whole set.
 
+## Unreleased
+
+### Added
+
+- New module `com.easytoolkit.simulationlod` (assemblies `Easy.SimulationLod`,
+  `Easy.SimulationLod.BehaviourTree`, `Easy.SimulationLod.Editor`; depends on
+  `behaviourtree`, so list `behaviourtree` and `logging` in the manifest too).
+  A generic port of a project's tested AI simulation LOD:
+  - Tiers `Full`, `Minimal`, `Off` and the new `Dormant` (asleep whatever the
+    distance, camera and stickiness; left only by an explicit activation).
+  - `SimulationLodDriver`: distance and district (`SimulationSegmentMap`)
+    tiers with hysteresis, view camera and observer-view protection,
+    round-robin evaluation, per-frame budgets (evaluations, activation
+    changes, thinks, Minimal thinks, think time), noise and damage wake,
+    staggered wake-all, managed parking (`IsManagedParked`, `TryWakeManaged`,
+    `SuspendManaged`, `ReadmitManaged`), `ISimulationLodPolicy`.
+  - `SimulationAgent` with whole-object parking (`IsParked`, `IsParking`,
+    `IsUnparking`) and `ISimulationTierListener` components; built-in
+    listeners for Animator culling, NavMeshAgent and Behaviour toggling.
+  - `SimulationVolume`: occupants by containment or explicit list (innermost
+    wins), Dormant or capped while inactive, activation by method call,
+    observer trigger, noise or occupant damage, all-at-once / staggered /
+    nearest-first wakes within the driver budget, optional deactivation when
+    observers leave, events and gizmos. Membership tracking (`TrackMembership`,
+    default on) re-checks containment on the driver's evaluation slice, so
+    agents that enter or spawn later join and leavers are released. A volume
+    hold never takes an awake agent that is sticky or on screen, and a
+    Minimal/Off cap never applies on screen; Dormant stays camera-agnostic.
+  - Sample "Cellar Door" (`Samples~/CellarDoor`).
+  - `SimulationAgent.ReadmitOnEnable` (default on): an agent suspended by an
+    outside deactivation (pooling) is readmitted when enabled again; an
+    explicit `SuspendManaged` stays out. A readmission is a new admission
+    (volume assigned again, hold applied at once). Disabling the driver
+    reactivates every object it parked and completes an interrupted wake-all.
+  - Behaviour tree integration: `SimulationTreeTicker<T,V>` and
+    `SimulationBehaviourTreeRunner<T,V>` scale the tick rate with the tier
+    through the frame think budget. The behaviour tree module is unchanged.
+  - EditMode and PlayMode tests, including a zero-allocation steady-frame test.
+
+### Compatibility
+
+- Minimum versions are unchanged (`unity: 2021.3`). No existing module changed.
+
 ## 0.3.1 - 2026-10-01
 
 ### Added

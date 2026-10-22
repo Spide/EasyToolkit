@@ -1,0 +1,23 @@
+{
+  "name": "Easy.SimulationLod.Tests.Support",
+  "rootNamespace": "Easy.SimulationLod.Tests",
+  "references": [
+    "Easy.SimulationLod",
+    "Easy.SimulationLod.BehaviourTree",
+    "Easy.BehaviourTree"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}
