@@ -1,11 +1,11 @@
 {
   "name": "com.easytoolkit.state",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "displayName": "Easy Toolkit State",
   "description": "Dynamic key/value state containers and helpers for combining values.",
   "unity": "2021.3",
   "dependencies": {
-    "com.easytoolkit.logging": "0.3.1"
+    "com.easytoolkit.logging": "0.4.0"
   },
   "author": {
     "name": "Easy Toolkit"

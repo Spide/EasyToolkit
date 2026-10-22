@@ -1,11 +1,11 @@
 {
   "name": "com.easytoolkit.statemachine",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "displayName": "Easy Toolkit State Machine",
   "description": "Generic finite state machine with regular and any-state transitions.",
   "unity": "2021.3",
   "dependencies": {
-    "com.easytoolkit.logging": "0.3.1"
+    "com.easytoolkit.logging": "0.4.0"
   },
   "author": {
     "name": "Easy Toolkit"

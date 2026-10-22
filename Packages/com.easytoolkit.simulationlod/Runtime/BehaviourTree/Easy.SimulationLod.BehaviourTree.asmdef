@@ -1,0 +1,17 @@
+{
+    "name": "Easy.SimulationLod.BehaviourTree",
+    "rootNamespace": "Easy.SimulationLod.BehaviourTree",
+    "references": [
+        "Easy.SimulationLod",
+        "Easy.BehaviourTree"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

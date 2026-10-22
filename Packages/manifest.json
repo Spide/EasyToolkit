@@ -45,6 +45,7 @@
     "com.easytoolkit.pooling",
     "com.easytoolkit.save",
     "com.easytoolkit.sceneflow",
+    "com.easytoolkit.simulationlod",
     "com.easytoolkit.state",
     "com.easytoolkit.statemachine"
   ]

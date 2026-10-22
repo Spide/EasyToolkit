@@ -1,0 +1,27 @@
+{
+  "name": "com.easytoolkit.simulationlod",
+  "version": "0.4.0",
+  "displayName": "Easy Toolkit Simulation LOD",
+  "description": "Simulation level of detail for AI agents: distance and district tiers with hysteresis, dormant agents, whole-object parking, activation volumes, per-frame budgets and behaviour tree tick scaling.",
+  "unity": "2021.3",
+  "dependencies": {
+    "com.easytoolkit.behaviourtree": "0.4.0",
+    "com.unity.modules.ai": "1.0.0",
+    "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.physics": "1.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "Cellar Door",
+      "description": "A code-built scene: a Dormant cellar volume whose sleepers wake nearest-first when the door opens.",
+      "path": "Samples~/CellarDoor"
+    }
+  ],
+  "author": {
+    "name": "Easy Toolkit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spide/EasyToolkit.git"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "com.easytoolkit.save",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "displayName": "Easy Toolkit Save",
   "description": "Versioned JSON saves with migrations, safe relative keys, atomic writes and stable identity.",
   "unity": "2021.3",

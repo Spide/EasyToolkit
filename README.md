@@ -22,6 +22,7 @@ local copies of the modules.
 | `com.easytoolkit.control` | `Easy.Control` | logging, Input System | Priority-based control contexts with event propagation |
 | `com.easytoolkit.behaviourtree` | `Easy.BehaviourTree`, `.Editor` | logging | Behaviour trees, decorators, builders, debugger window |
 | `com.easytoolkit.character` | `Easy.Character.*` | Input System | Character motor, input adapter, camera, animation, aim IK ([README](Packages/com.easytoolkit.character/README.md)) |
+| `com.easytoolkit.simulationlod` | `Easy.SimulationLod`, `.BehaviourTree`, `.Editor` | behaviourtree (logging) | AI simulation LOD: distance and district tiers with hysteresis, Dormant agents, whole-object parking, activation volumes, per-frame budgets, behaviour tree tick scaling ([README](Packages/com.easytoolkit.simulationlod/README.md)) |
 
 ## Using modules in a project
 
@@ -29,9 +30,9 @@ Add one line per module to the project's `Packages/manifest.json`. Pin a
 release tag:
 
 ```json
-"com.easytoolkit.logging": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.logging#v0.3.1",
-"com.easytoolkit.di": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.di#v0.3.1",
-"com.easytoolkit.sceneflow": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.sceneflow#v0.3.1"
+"com.easytoolkit.logging": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.logging#v0.4.0",
+"com.easytoolkit.di": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.di#v0.4.0",
+"com.easytoolkit.sceneflow": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.sceneflow#v0.4.0"
 ```
 
 Rules:

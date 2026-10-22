@@ -1,6 +1,6 @@
 {
   "name": "com.easytoolkit.logging",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "displayName": "Easy Toolkit Logging",
   "description": "Channelled colored logger over Unity logging with JSON-configured levels.",
   "unity": "2021.3",
