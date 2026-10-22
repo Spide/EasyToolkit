@@ -30,9 +30,9 @@ Add one line per module to the project's `Packages/manifest.json`. Pin a
 release tag:
 
 ```json
-"com.easytoolkit.logging": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.logging#v0.3.1",
-"com.easytoolkit.di": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.di#v0.3.1",
-"com.easytoolkit.sceneflow": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.sceneflow#v0.3.1"
+"com.easytoolkit.logging": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.logging#v0.4.0",
+"com.easytoolkit.di": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.di#v0.4.0",
+"com.easytoolkit.sceneflow": "https://github.com/Spide/EasyToolkit.git?path=/Packages/com.easytoolkit.sceneflow#v0.4.0"
 ```
 
 Rules:

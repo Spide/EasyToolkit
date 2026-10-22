@@ -1,11 +1,11 @@
 {
   "name": "com.easytoolkit.behaviourtree",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "displayName": "Easy Toolkit Behaviour Tree",
   "description": "Behaviour tree nodes, decorators, builders and a debugger window.",
   "unity": "2021.3",
   "dependencies": {
-    "com.easytoolkit.logging": "0.3.1"
+    "com.easytoolkit.logging": "0.4.0"
   },
   "author": {
     "name": "Easy Toolkit"

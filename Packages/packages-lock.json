@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.logging": "0.3.1"
+        "com.easytoolkit.logging": "0.4.0"
       }
     },
     "com.easytoolkit.character": {
@@ -21,7 +21,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.logging": "0.3.1",
+        "com.easytoolkit.logging": "0.4.0",
         "com.unity.inputsystem": "1.7.0"
       }
     },
@@ -30,7 +30,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.logging": "0.3.1"
+        "com.easytoolkit.logging": "0.4.0"
       }
     },
     "com.easytoolkit.logging": {
@@ -44,7 +44,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.logging": "0.3.1"
+        "com.easytoolkit.logging": "0.4.0"
       }
     },
     "com.easytoolkit.save": {
@@ -58,8 +58,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.di": "0.3.1",
-        "com.easytoolkit.logging": "0.3.1"
+        "com.easytoolkit.di": "0.4.0",
+        "com.easytoolkit.logging": "0.4.0"
       }
     },
     "com.easytoolkit.simulationlod": {
@@ -67,7 +67,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.behaviourtree": "0.3.1",
+        "com.easytoolkit.behaviourtree": "0.4.0",
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.physics": "1.0.0"
@@ -78,7 +78,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.logging": "0.3.1"
+        "com.easytoolkit.logging": "0.4.0"
       }
     },
     "com.easytoolkit.statemachine": {
@@ -86,7 +86,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.easytoolkit.logging": "0.3.1"
+        "com.easytoolkit.logging": "0.4.0"
       }
     },
     "com.unity.editorcoroutines": {
